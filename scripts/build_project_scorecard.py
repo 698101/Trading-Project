@@ -78,9 +78,21 @@ def pass_warn_fail_counts(rows: list[dict[str, str]]) -> str:
     return f"{counts['pass']} pass / {counts['warn']} warn / {counts['fail']} fail"
 
 
+def validation_row(rows: list[dict[str, str]], variant: str, split: str) -> dict[str, str]:
+    for row in rows:
+        if (
+            row.get("variant") == variant
+            and row.get("split") == split
+            and row.get("scope") == "combined"
+        ):
+            return row
+    return {}
+
+
 def build_micro_section(root: Path) -> list[str]:
     results_dir = root / "hft_microstructure" / "Results"
     quality_rows = read_csv(results_dir / "micro_alpha_quality_sharpe_summary.csv")
+    validation_rows = read_csv(results_dir / "micro_alpha_validation_summary.csv")
     baseline = find_row(quality_rows, scope="original_mm_baseline")
     quality = find_row(quality_rows, scope="combined")
     prior = find_row(quality_rows, scope="prior_edge_selected")
@@ -147,9 +159,48 @@ def build_micro_section(root: Path) -> list[str]:
         ]
     )
     lines.extend(markdown_table(symbol_table, list(symbol_table[0].keys())))
+    if validation_rows:
+        selected_train = validation_row(validation_rows, "selected_quality_gate", "train")
+        selected_oos = validation_row(validation_rows, "selected_quality_gate", "oos")
+        baseline_oos = validation_row(validation_rows, "original_mm_baseline", "oos")
+        validation_table = [
+            {
+                "Variant": "Original mm baseline",
+                "Split": "OOS",
+                "Dates": f"{baseline_oos.get('start_date', '')} to {baseline_oos.get('end_date', '')}",
+                "Minute Sharpe": fmt(baseline_oos.get("minute_sharpe")),
+                "Daily Sharpe": fmt(baseline_oos.get("daily_sharpe")),
+                "Total PnL": fmt_bps(baseline_oos.get("total_pnl_bps")),
+            },
+            {
+                "Variant": "Selected quality gate",
+                "Split": "Train",
+                "Dates": f"{selected_train.get('start_date', '')} to {selected_train.get('end_date', '')}",
+                "Minute Sharpe": fmt(selected_train.get("minute_sharpe")),
+                "Daily Sharpe": fmt(selected_train.get("daily_sharpe")),
+                "Total PnL": fmt_bps(selected_train.get("total_pnl_bps")),
+            },
+            {
+                "Variant": "Selected quality gate",
+                "Split": "OOS",
+                "Dates": f"{selected_oos.get('start_date', '')} to {selected_oos.get('end_date', '')}",
+                "Minute Sharpe": fmt(selected_oos.get("minute_sharpe")),
+                "Daily Sharpe": fmt(selected_oos.get("daily_sharpe")),
+                "Total PnL": fmt_bps(selected_oos.get("total_pnl_bps")),
+            },
+        ]
+        oos_minute_delta = as_float(selected_oos.get("minute_sharpe")) - as_float(baseline_oos.get("minute_sharpe"))
+        lines.extend(["", "Chronological validation sanity check:", ""])
+        lines.extend(markdown_table(validation_table, list(validation_table[0].keys())))
+        lines.extend(
+            [
+                "",
+                f"Selected quality gate OOS minute Sharpe improvement vs original mm baseline: {oos_minute_delta:+.3f}.",
+                "",
+            ]
+        )
     lines.extend(
         [
-            "",
             "Current boundary: this is Alpaca IEX top-of-book evidence over 51 SPY/QQQ/IWM open-window sessions, not full depth-of-book or live fills.",
             "",
         ]
@@ -243,7 +294,7 @@ def build_scorecard(root: Path) -> str:
         [
             "## Upgrade Priorities",
             "",
-            "1. Extend HFT evidence beyond SPY/QQQ/IWM and split parameter selection from out-of-sample validation.",
+            "1. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows.",
             "2. Add a calibrated passive-fill and queue-position model using execution or order-book data.",
             "3. Replace the medium-alpha universe with point-in-time, delisting-aware data.",
             "4. Keep raw-data manifests and exact run configs pinned so GitHub evidence is reproducible.",

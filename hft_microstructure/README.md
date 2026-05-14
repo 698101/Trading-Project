@@ -42,6 +42,8 @@ The Alpaca real-quote verification workflow downloads raw quotes into the ignore
 - `Results/alpaca_spy_real_quote_mm_only_summary.csv`, `Results/alpaca_qqq_real_quote_mm_only_summary.csv`, `Results/alpaca_iwm_real_quote_mm_only_summary.csv`: market-making-only baseline summaries.
 - `Results/alpaca_spy_real_quote_stress_distribution_summary.csv`, `Results/alpaca_qqq_real_quote_stress_distribution_summary.csv`, and `Results/alpaca_iwm_real_quote_stress_distribution_summary.csv`: real-quote stress distributions across seeds, adverse-selection penalties, and portfolio modes.
 - `Results/alpaca_spy_real_quote_latency_sensitivity.csv`, `Results/alpaca_qqq_real_quote_latency_sensitivity.csv`, and `Results/alpaca_iwm_real_quote_latency_sensitivity.csv`: true signal-latency sensitivity on the same real-quote cuts.
+- `Results/micro_alpha_quality_sharpe_summary.csv` and `Results/micro_alpha_quality_sharpe_report.md`: selected market-making quality-gate evidence behind the 0.601 combined minute Sharpe and 2.876 combined daily Sharpe.
+- `Results/micro_alpha_validation_summary.csv` and `Results/micro_alpha_validation_report.md`: chronological train/OOS sanity check for the baseline, edge-selected, and selected quality-gate variants.
 
 Raw quote files are not committed. The restored local raw quote folder is large and should be treated as a local data cache, not a source artifact.
 
@@ -149,6 +151,7 @@ Current demo artifact counts:
 
 - `Plots/hft_report.png` and `Plots/hft_real_quote_dashboard.png`: dark real-quote dashboard for 51-session SPY/QQQ/IWM baseline, selected quality-gate Sharpe, confidence intervals, and stress boundary.
 - `Plots/hft_micro_alpha_quality_sharpe.png`: selected market-making quality-gate summary showing the 2.876 combined daily Sharpe and 0.601 combined minute Sharpe.
+- `Plots/hft_micro_alpha_validation.png`: chronological train/OOS validation view for the baseline, edge-selected, and selected quality-gate variants.
 - `Plots/hft_cross_symbol_cumulative_pnl.png`: cumulative full and market-making-only PnL curves by symbol.
 - `Plots/hft_daily_pnl_bars.png`: daily full-portfolio PnL bars for SPY, QQQ, and IWM.
 - `Plots/hft_adverse_selection_stress.png`: PnL and minute Sharpe decay under 0 to 2 bps adverse-selection penalties.
@@ -214,6 +217,12 @@ Run the multi-symbol real-quote suite orchestrator:
 ```bash
 python3 scripts/run_real_quote_symbol_suite.py --skip-download --symbols SPY,QQQ,IWM --no-run-stress --no-run-latency
 python3 scripts/analyze_real_quote_evidence.py --symbols SPY,QQQ,IWM
+```
+
+Rebuild the saved micro-alpha validation report from local saved backtest outputs:
+
+```bash
+python3 scripts/analyze_micro_alpha_validation.py
 ```
 
 See `build_instructions.md` for compiler notes and optional tools.

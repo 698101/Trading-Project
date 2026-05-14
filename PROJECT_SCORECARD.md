@@ -30,6 +30,16 @@ Selected quality gate improvement vs original mm baseline: +0.088 minute Sharpe 
 | QQQ | 0.30 | 0.25 | 1.00 | 0.615 | 1.819 | 12,752.5 bps | 26,990 |
 | IWM | 0.75 | 0.00 | 0.00 | 0.397 | 1.572 | 5,375.2 bps | 9,621 |
 
+Chronological validation sanity check:
+
+| Variant | Split | Dates | Minute Sharpe | Daily Sharpe | Total PnL |
+| --- | --- | --- | --- | --- | --- |
+| Original mm baseline | OOS | 2026-04-15 to 2026-05-12 | 0.455 | 3.800 | 12,648.8 bps |
+| Selected quality gate | Train | 2026-03-02 to 2026-04-14 | 0.613 | 2.532 | 20,052.3 bps |
+| Selected quality gate | OOS | 2026-04-15 to 2026-05-12 | 0.584 | 3.733 | 12,928.1 bps |
+
+Selected quality gate OOS minute Sharpe improvement vs original mm baseline: +0.129.
+
 Current boundary: this is Alpaca IEX top-of-book evidence over 51 SPY/QQQ/IWM open-window sessions, not full depth-of-book or live fills.
 
 ## Medium Alpha
@@ -49,7 +59,7 @@ Current boundary: the saved result is not point-in-time/delisting-aware and rema
 
 ## Upgrade Priorities
 
-1. Extend HFT evidence beyond SPY/QQQ/IWM and split parameter selection from out-of-sample validation.
+1. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows.
 2. Add a calibrated passive-fill and queue-position model using execution or order-book data.
 3. Replace the medium-alpha universe with point-in-time, delisting-aware data.
 4. Keep raw-data manifests and exact run configs pinned so GitHub evidence is reproducible.

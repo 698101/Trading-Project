@@ -52,6 +52,8 @@
   ],
   "saved_outputs": {
     "summary_csv": "hft_microstructure/Results/micro_alpha_quality_sharpe_summary.csv",
-    "report_md": "hft_microstructure/Results/micro_alpha_quality_sharpe_report.md"
+    "report_md": "hft_microstructure/Results/micro_alpha_quality_sharpe_report.md",
+    "validation_summary_csv": "hft_microstructure/Results/micro_alpha_validation_summary.csv",
+    "validation_report_md": "hft_microstructure/Results/micro_alpha_validation_report.md"
   }
 }

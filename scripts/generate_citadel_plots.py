@@ -182,6 +182,24 @@ def hft_quality_summary() -> pd.DataFrame:
     return frame
 
 
+def hft_validation_summary() -> pd.DataFrame:
+    frame = read_csv(HFT_RESULTS / "micro_alpha_validation_summary.csv")
+    numeric_cols = [
+        "sessions",
+        "total_pnl_bps",
+        "avg_daily_pnl_bps",
+        "daily_sharpe",
+        "annualized_daily_sharpe",
+        "minute_sharpe",
+        "worst_drawdown_bps",
+        "trade_count",
+    ]
+    for col in numeric_cols:
+        if col in frame:
+            frame[col] = clean_num(frame[col])
+    return frame
+
+
 def hft_evidence_ci() -> pd.DataFrame:
     frame = read_csv(HFT_RESULTS / "real_quote_evidence_ci.csv")
     for col in [
@@ -420,6 +438,86 @@ def plot_hft_micro_alpha_quality() -> None:
 
     add_note(fig, "Generated from micro_alpha_quality_sharpe_summary.csv. The 2.876 value is combined daily Sharpe across SPY, QQQ, and IWM daily PnL.")
     save(fig, HFT_PLOTS / "hft_micro_alpha_quality_sharpe.png")
+
+
+def plot_hft_micro_alpha_validation() -> None:
+    validation = hft_validation_summary()
+    combined = validation[validation["scope"] == "combined"].copy()
+    combined["display_label"] = combined["label"].str.replace(" ", "\n")
+    train = combined[combined["split"] == "train"].copy()
+    oos = combined[combined["split"] == "oos"].copy()
+    selected_oos = oos[oos["variant"] == "selected_quality_gate"].iloc[0]
+    baseline_oos = oos[oos["variant"] == "original_mm_baseline"].iloc[0]
+    minute_delta = float(selected_oos["minute_sharpe"] - baseline_oos["minute_sharpe"])
+
+    fig = plt.figure(figsize=(16, 8.6))
+    grid = fig.add_gridspec(2, 3, width_ratios=[1.15, 1.15, 0.9])
+    fig.suptitle(
+        "Micro Alpha Chronological Validation",
+        x=0.01,
+        y=0.995,
+        ha="left",
+        fontsize=22,
+        color=WHITE,
+        fontweight="bold",
+    )
+    fig.text(
+        0.01,
+        0.955,
+        "31-session train window and 20-session OOS window from saved SPY/QQQ/IWM backtests.",
+        color=MUTED,
+        ha="left",
+        fontsize=11,
+    )
+
+    colors = [GREEN if variant == "selected_quality_gate" else CYAN if variant == "prior_edge_selected" else AMBER for variant in oos["variant"]]
+
+    ax_minute = fig.add_subplot(grid[0, 0])
+    bars = ax_minute.bar(oos["display_label"], oos["minute_sharpe"], color=colors)
+    style_ax(ax_minute, "OOS Minute Sharpe", "Variant", "Minute Sharpe")
+    for bar, value in zip(bars, oos["minute_sharpe"]):
+        ax_minute.text(bar.get_x() + bar.get_width() / 2, value + 0.015, f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_daily = fig.add_subplot(grid[0, 1])
+    bars = ax_daily.bar(oos["display_label"], oos["daily_sharpe"], color=colors)
+    style_ax(ax_daily, "OOS Daily Sharpe", "Variant", "Daily Sharpe")
+    for bar, value in zip(bars, oos["daily_sharpe"]):
+        ax_daily.text(bar.get_x() + bar.get_width() / 2, value + 0.08, f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_read = fig.add_subplot(grid[0, 2])
+    ax_read.set_axis_off()
+    ax_read.text(0.04, 0.86, "Selected OOS Read", fontsize=15, color=WHITE, fontweight="bold")
+    rows = [
+        ("Minute Sharpe", f"{selected_oos['minute_sharpe']:.3f}", GREEN),
+        ("Daily Sharpe", f"{selected_oos['daily_sharpe']:.3f}", GREEN),
+        ("PnL", f"{selected_oos['total_pnl_bps']:,.1f} bps", TEXT),
+        ("Minute Delta", f"{minute_delta:+.3f}", GREEN if minute_delta >= 0 else RED),
+        ("Dates", f"{selected_oos['start_date']} to\n{selected_oos['end_date']}", MUTED),
+    ]
+    y = 0.68
+    for label, value, color in rows:
+        ax_read.text(0.04, y, label, fontsize=11, color=MUTED)
+        ax_read.text(0.96, y, value, fontsize=13, color=color, ha="right", fontweight="bold")
+        y -= 0.135
+
+    ax_train = fig.add_subplot(grid[1, :2])
+    width = 0.36
+    x = np.arange(len(train))
+    ax_train.bar(x - width / 2, train["minute_sharpe"], width, color=CYAN, label="Train")
+    ax_train.bar(x + width / 2, oos["minute_sharpe"], width, color=GREEN, label="OOS")
+    ax_train.set_xticks(x)
+    ax_train.set_xticklabels(train["display_label"])
+    style_ax(ax_train, "Train vs OOS Minute Sharpe", "Variant", "Minute Sharpe")
+    line_legend(ax_train, ncol=2, loc="upper right")
+
+    ax_note = fig.add_subplot(grid[1, 2])
+    ax_note.set_axis_off()
+    ax_note.text(0.04, 0.80, "Interpretation", fontsize=15, color=WHITE, fontweight="bold")
+    ax_note.text(0.05, 0.58, "Quality gate is best on train and remains positive OOS.", fontsize=11, color=TEXT)
+    ax_note.text(0.05, 0.38, "This is a chronological sanity check, not a future unseen live test.", fontsize=11, color=MUTED)
+
+    add_note(fig, "Generated from micro_alpha_validation_summary.csv. Raw quote files remain local and excluded from git.")
+    save(fig, HFT_PLOTS / "hft_micro_alpha_validation.png")
 
 
 def plot_hft_cumulative() -> None:
@@ -908,6 +1006,7 @@ def plot_medium_factor_diagnostics() -> None:
 def generate_hft_plots() -> None:
     plot_hft_dashboard()
     plot_hft_micro_alpha_quality()
+    plot_hft_micro_alpha_validation()
     plot_hft_cumulative()
     plot_hft_daily_bars()
     plot_hft_stress()

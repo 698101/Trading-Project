@@ -92,6 +92,24 @@ The table is useful because it separates the stronger SPY/QQQ evidence from the 
 
 These intervals resample days and are descriptive uncertainty estimates, not a proof of future profitability.
 
+## Micro Alpha Quality Gate And Validation
+
+`Results/micro_alpha_quality_sharpe_summary.csv` captures the selected market-making quality gate after the edge-floor sweep. The combined SPY/QQQ/IWM selected quality gate records:
+
+| Version | Minute Sharpe | Daily Sharpe | Total PnL | Worst DD | Trades |
+|---|---:|---:|---:|---:|---:|
+| Original mm baseline | 0.513 | 2.529 | 32,193.4 bps | -14.3 bps | 78,070 |
+| Selected quality gate | 0.601 | 2.876 | 32,980.4 bps | -13.7 bps | 56,646 |
+
+`Results/micro_alpha_validation_report.md` adds a chronological train/OOS sanity check. The selected quality gate is the best tracked variant on the 31-session train window and keeps positive OOS evidence over the later 20 sessions:
+
+| Split | Dates | Minute Sharpe | Daily Sharpe | Total PnL |
+|---|---|---:|---:|---:|
+| Train | 2026-03-02 to 2026-04-14 | 0.613 | 2.532 | 20,052.3 bps |
+| OOS | 2026-04-15 to 2026-05-12 | 0.584 | 3.733 | 12,928.1 bps |
+
+This reduces pure full-sample tuning risk, but it is still not a substitute for a genuinely new date range, more symbols, and execution-calibrated fills.
+
 ## Real-Quote Stress Grid
 
 `Results/alpaca_spy_real_quote_stress_distribution_summary.csv` summarizes the SPY 51-session stress runs across three fill-randomness seeds, five adverse-selection penalties, and two portfolio modes.
@@ -255,6 +273,10 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Results/alpaca_qqq_real_quote_stress_distribution_summary.csv`
 - `Results/alpaca_iwm_real_quote_stress_distribution_summary.csv`
 - `Results/alpaca_iwm_real_quote_mm_only_summary.csv`
+- `Results/micro_alpha_quality_sharpe_summary.csv`
+- `Results/micro_alpha_quality_sharpe_report.md`
+- `Results/micro_alpha_validation_summary.csv`
+- `Results/micro_alpha_validation_report.md`
 - `Results/demo_quotes_synthetic.csv`
 - `Results/trade_log.csv`
 - `Results/rejected_signals.csv`
@@ -263,6 +285,7 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Plots/hft_report.png`
 - `Plots/hft_real_quote_dashboard.png`
 - `Plots/hft_micro_alpha_quality_sharpe.png`
+- `Plots/hft_micro_alpha_validation.png`
 - `Plots/hft_cross_symbol_cumulative_pnl.png`
 - `Plots/hft_daily_pnl_bars.png`
 - `Plots/hft_adverse_selection_stress.png`
