@@ -1,0 +1,57 @@
+{
+  "name": "micro_alpha_selected_quality_mm_only",
+  "purpose": "Pinned selected configuration for the SPY/QQQ/IWM market-making micro alpha quality-gate pass.",
+  "quote_source": "Alpaca historical IEX top-of-book quotes",
+  "raw_quote_data_in_git": false,
+  "date_range": {
+    "start": "2026-03-02",
+    "end": "2026-05-12",
+    "excluded_dates": ["2026-04-03"],
+    "sessions_per_symbol": 51,
+    "window": "market open 60 minutes"
+  },
+  "selection_metric": "minute_sharpe",
+  "common_parameters": {
+    "rolling_window": 75,
+    "forecast_weight": 0.70,
+    "min_reentry_events": 40,
+    "interval_seconds": 60,
+    "max_gross_exposure": 1.0,
+    "seed": 1337,
+    "forecast_mode": "heuristic",
+    "portfolio_mode": "mm-only",
+    "decision_mode": "off",
+    "adverse_selection_bps": 0.0,
+    "signal_latency_us": 0
+  },
+  "symbols": [
+    {
+      "symbol": "SPY",
+      "manifest": "hft_microstructure/Results/alpaca_spy_quote_manifest.csv",
+      "min_edge_bps": 0.30,
+      "mm_min_entry_microprice_edge_100ms_bps": 0.25,
+      "mm_min_entry_spread_100ms_bps": 1.00,
+      "mm_max_entry_side_imbalance_1s": 1.0
+    },
+    {
+      "symbol": "QQQ",
+      "manifest": "hft_microstructure/Results/alpaca_qqq_quote_manifest.csv",
+      "min_edge_bps": 0.30,
+      "mm_min_entry_microprice_edge_100ms_bps": 0.25,
+      "mm_min_entry_spread_100ms_bps": 1.00,
+      "mm_max_entry_side_imbalance_1s": 1.0
+    },
+    {
+      "symbol": "IWM",
+      "manifest": "hft_microstructure/Results/alpaca_iwm_quote_manifest.csv",
+      "min_edge_bps": 0.75,
+      "mm_min_entry_microprice_edge_100ms_bps": 0.00,
+      "mm_min_entry_spread_100ms_bps": 0.00,
+      "mm_max_entry_side_imbalance_1s": 1.0
+    }
+  ],
+  "saved_outputs": {
+    "summary_csv": "hft_microstructure/Results/micro_alpha_quality_sharpe_summary.csv",
+    "report_md": "hft_microstructure/Results/micro_alpha_quality_sharpe_report.md"
+  }
+}

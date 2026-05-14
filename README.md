@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-﻿# Quant Trading Research Portfolio
+# Quant Trading Research Portfolio
 
 This repository is a recruiter-facing research portfolio for quant trading, HFT-inspired microstructure research, systematic trading, and quantitative research roles. It contains two independent projects:
 
@@ -8,7 +7,7 @@ This repository is a recruiter-facing research portfolio for quant trading, HFT-
 
 The code is research infrastructure, not a live trading system. The focus is on interpretable assumptions, transaction costs, benchmark-aware reporting, robustness checks, and reproducible presentation artifacts.
 
-For a short review path, see `REVIEWER_GUIDE.md`.
+For a short review path, see `REVIEWER_GUIDE.md`. For the current metric/risk scorecard, see `PROJECT_SCORECARD.md`.
 
 ## Project Dashboards
 
@@ -20,7 +19,7 @@ For a short review path, see `REVIEWER_GUIDE.md`.
 
 | Project | Focus | Language | What It Demonstrates | Saved Headline Evidence |
 |---|---|---:|---|---|
-| `hft_microstructure/` | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Baseline full-mode PnL: SPY 11,373.0 bps, QQQ 8,471.4 bps, IWM 4,180.6 bps. Stress grids show explicit adverse-selection breakpoints: SPY survives 1 bps and fails at 2 bps, QQQ survives 0.5 bps and fails around 1 bps, and IWM full-mode is marginal around 1 bps |
+| `hft_microstructure/` | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Selected market-making quality gate: 0.601 minute Sharpe and 2.876 daily Sharpe combined across SPY/QQQ/IWM. Stress grids show explicit adverse-selection breakpoints: SPY survives 1 bps and fails at 2 bps, QQQ survives 0.5 bps and fails around 1 bps, and IWM full-mode is marginal around 1 bps |
 | `medium_term_alpha/` | Cross-sectional medium-term equity alpha with cost-aware portfolio construction | Python | Signal engineering, walk-forward validation, sensitivity/capacity analysis, benchmark comparison, bootstrap/negative-control reporting | Selected default: 1.45 annualized Sharpe vs SPY 0.80, 18.9% annualized return, 322.4% total return, -15.6% max drawdown. Robustness scorecard passes benchmark, walk-forward, cost, capacity, and sign-flip checks; point-in-time universe remains the main fail |
 
 ## Repository Structure
@@ -30,8 +29,12 @@ quant-trading-research-portfolio/
 |-- README.md
 |-- .gitignore
 |-- LICENSE
+|-- PROJECT_SCORECARD.md
 |-- REPO_AUDIT.md
 |-- REVIEWER_GUIDE.md
+|-- configs/
+|   |-- micro_alpha_selected_quality.json
+|   |-- medium_alpha_selected_default.json
 |-- hft_microstructure/
 |   |-- README.md
 |   |-- RESULTS_SUMMARY.md
@@ -191,6 +194,12 @@ python3 scripts/export_medium_alpha_selected_audit.py --csv /path/to/pinned_full
 
 Dark reviewer plots are regenerated from saved CSVs with `python3 scripts/generate_citadel_plots.py`. HFT demo diagnostics use synthetic quotes for engine/log reproducibility only; full HFT result reproduction requires the excluded raw quote files. Full medium-term alpha runs can use the online data workflow with `python main.py --start 2018-01-01`, subject to data availability.
 
+The top-level scorecard is regenerated from committed CSV artifacts with:
+
+```bash
+python3 scripts/build_project_scorecard.py
+```
+
 ## Limitations
 
 - This is research code, not production trading infrastructure.
@@ -203,6 +212,3 @@ Dark reviewer plots are regenerated from saved CSVs with `python3 scripts/genera
 - Medium-term data quality depends on the input source; online downloads can vary.
 - Historical results are not evidence of guaranteed future performance.
 
-=======
-# Quant-Trading
->>>>>>> c39c18f7556dc27a8c884f586ded34ab8199dc90

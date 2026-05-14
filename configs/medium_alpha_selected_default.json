@@ -1,0 +1,38 @@
+{
+  "name": "medium_alpha_selected_default",
+  "purpose": "Pinned selected-default medium-term cross-sectional equity alpha parameters.",
+  "data_boundary": {
+    "saved_run_start": "2018-01-02",
+    "saved_run_end": "2026-05-06",
+    "point_in_time_universe": false,
+    "delisting_aware": false
+  },
+  "selection_method": "Selected by Sharpe, drawdown, turnover, cost impact, benchmark comparison, walk-forward stability, and local sensitivity.",
+  "parameters": {
+    "candidate_id": 3670,
+    "min_signal_strength": 0.85,
+    "top_quantile": 0.25,
+    "signal_change_threshold": 0.05,
+    "max_position_size": 0.06,
+    "negative_trend_scale": 0.40,
+    "high_volatility_scale": 0.40,
+    "short_term_reversal_penalty": 0.15,
+    "quality_weight": 0.20,
+    "mean_reversion_weight": 0.25,
+    "multi_momentum_weight": 0.55
+  },
+  "saved_metrics": {
+    "annualized_sharpe": 1.450505587248036,
+    "annualized_return": 0.18903734779582293,
+    "total_return": 3.224097650618349,
+    "max_drawdown": -0.1564201090090841,
+    "benchmark_annualized_sharpe": 0.8030361907524378,
+    "benchmark_total_return": 2.102059356109117
+  },
+  "saved_outputs": {
+    "selected_metrics_csv": "medium_term_alpha/Results/selected_default_metrics.csv",
+    "benchmark_comparison_csv": "medium_term_alpha/Results/benchmark_comparison.csv",
+    "robustness_report_md": "medium_term_alpha/Results/medium_alpha_robustness_report.md",
+    "robustness_scorecard_csv": "medium_term_alpha/Results/medium_alpha_robustness_scorecard.csv"
+  }
+}

@@ -5,8 +5,9 @@ This guide is a short path through the repo for quant/HFT recruiters and intervi
 ## Start Here
 
 1. `README.md` for the two-project overview and headline metrics.
-2. `hft_microstructure/README.md` and `hft_microstructure/RESULTS_SUMMARY.md` for the C++ microstructure simulator.
-3. `medium_term_alpha/README.md` and `medium_term_alpha/RESULTS_SUMMARY.md` for the Python cross-sectional alpha research.
+2. `PROJECT_SCORECARD.md` for the current metric/risk summary and honest rating.
+3. `hft_microstructure/README.md` and `hft_microstructure/RESULTS_SUMMARY.md` for the C++ microstructure simulator.
+4. `medium_term_alpha/README.md` and `medium_term_alpha/RESULTS_SUMMARY.md` for the Python cross-sectional alpha research.
 
 ## Main Evidence Files
 
@@ -14,6 +15,8 @@ This guide is a short path through the repo for quant/HFT recruiters and intervi
 |---|---|---|
 | HFT microstructure | `hft_microstructure/Results/results_summary.csv`, `daily_results.csv`, `decision_engine_comparison.csv`, `strategy_sleeve_monte_carlo.csv`; restored Alpaca verification in `alpaca_real_quote_cross_symbol_summary.csv`, `alpaca_real_quote_cross_symbol_manifest_summary.csv`, `real_quote_evidence_ci.csv`, `real_quote_robustness_report.md`, per-symbol manifests/results for SPY, QQQ, and IWM, plus SPY/QQQ/IWM stress and latency files | `trade_log.csv`, `rejected_signals.csv`, `ablation_results.csv`, `latency_sensitivity.csv` generated from `demo_quotes_synthetic.csv` |
 | Medium-term alpha | `medium_term_alpha/Results/results_summary.csv`, `benchmark_comparison.csv`, `selected_default_metrics.csv`, `walk_forward_results.csv`, `sensitivity_results.csv`, `capacity_simulation.csv`, `medium_alpha_bootstrap_ci.csv`, `medium_alpha_negative_controls.csv`, `medium_alpha_robustness_scorecard.csv`, `medium_alpha_robustness_report.md` | `portfolio_weights.csv`, `rebalance_log.csv`, `daily_strategy_returns.csv`, `benchmark_timeseries.csv` generated from `sample_prices.csv` |
+
+Pinned selected-run configs live in `configs/`.
 
 ## Reproduce Plots And Diagnostics
 
