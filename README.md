@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Quant Trading Research Portfolio
 
 This repository is a recruiter-facing research portfolio for quant trading, HFT-inspired microstructure research, systematic trading, and quantitative research roles. It contains two independent projects:
@@ -202,3 +203,6 @@ Dark reviewer plots are regenerated from saved CSVs with `python3 scripts/genera
 - Medium-term data quality depends on the input source; online downloads can vary.
 - Historical results are not evidence of guaranteed future performance.
 
+=======
+# Quant-Trading
+>>>>>>> c39c18f7556dc27a8c884f586ded34ab8199dc90
