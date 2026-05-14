@@ -1,0 +1,8 @@
+metric,value
+momentum_dominance_share,1.0
+low_volatility_dominance_share,0.0
+strong_divergence_periods,0.0
+strong_divergence_share,0.0
+average_rolling_factor_correlation,-0.06417567574651489
+minimum_rolling_factor_correlation,-0.44826008381955057
+maximum_rolling_factor_correlation,0.3815011851412738

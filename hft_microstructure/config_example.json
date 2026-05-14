@@ -1,0 +1,14 @@
+{
+  "quotes": "Results/sample_quotes.csv",
+  "output_prefix": "Results/sample_run",
+  "rolling_window": 75,
+  "min_edge_bps": 0.20,
+  "forecast_weight": 0.70,
+  "min_reentry_events": 40,
+  "interval_seconds": 60,
+  "max_gross_exposure": 1.0,
+  "seed": 1337,
+  "forecast_mode": "heuristic",
+  "portfolio_mode": "full",
+  "decision_mode": "off"
+}

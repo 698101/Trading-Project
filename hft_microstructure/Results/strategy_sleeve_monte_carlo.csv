@@ -1,0 +1,4 @@
+"Strategy","Days","RunsPerDay","AvgSharpe","StdSharpe","MedianSharpe","WinDaysPct","AvgNetReturnBps","AvgTradeBps","WorstDDBps","AvgTrades"
+"SPY Open-Only Market Making","24","8","1,5111","1,1331","1,5295","91,7","50,3637","0,1971","-62,8387","286,76"
+"Liquidity Detection","24","8","0,3669","0,6194","0,2927","75","3,4554","0,1107","-228,2663","160,8"
+"Momentum Ignition","24","8","0,4791","0,5452","0,4092","83,3","10,4299","0,1203","-49,0127","107,59"

@@ -1,0 +1,2 @@
+label,sessions,total_pnl_bps,avg_daily_return_bps,minute_sharpe,worst_drawdown_bps,trade_count,trade_sharpe_reference,latency_expired_signals,quote_source
+mm-only_heuristic,51,11660.652700,228.640249,0.453232608271,-14.300815,35247,0.163613931762,222,Alpaca historical IEX top-of-book quotes

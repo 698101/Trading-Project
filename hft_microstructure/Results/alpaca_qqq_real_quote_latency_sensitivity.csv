@@ -1,0 +1,9 @@
+symbol,portfolio_mode,signal_latency_us,sessions,total_pnl_bps,avg_daily_return_bps,minute_sharpe,worst_drawdown_bps,trade_count,latency_expired_signals,quote_source
+QQQ,full,0,51,8471.387100,166.105629,0.426441419191,-15.236759,39431,0,Alpaca historical IEX top-of-book quotes
+QQQ,mm-only,0,51,11660.652700,228.640249,0.453262584975,-14.300815,35247,0,Alpaca historical IEX top-of-book quotes
+QQQ,full,1000,51,8759.049500,171.746069,0.428368465776,-15.236759,39431,87,Alpaca historical IEX top-of-book quotes
+QQQ,mm-only,1000,51,11660.652700,228.640249,0.453262584975,-14.300815,35247,87,Alpaca historical IEX top-of-book quotes
+QQQ,full,10000,51,8759.049500,171.746069,0.428349683837,-15.236759,39431,222,Alpaca historical IEX top-of-book quotes
+QQQ,mm-only,10000,51,11660.652700,228.640249,0.453232608271,-14.300815,35247,222,Alpaca historical IEX top-of-book quotes
+QQQ,full,100000,51,8759.049500,171.746069,0.428569250668,-15.236759,39431,1222,Alpaca historical IEX top-of-book quotes
+QQQ,mm-only,100000,51,11661.771100,228.662178,0.453360022821,-14.300815,35243,1222,Alpaca historical IEX top-of-book quotes

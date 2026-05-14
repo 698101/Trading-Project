@@ -1,0 +1,15 @@
+category,check,value,threshold,status,interpretation
+headline,annualized_sharpe,1.4505,>= 1.0,pass,Risk-adjusted return clears a basic institutional hurdle.
+benchmark,sharpe_spread_vs_spy,0.6475,> 0,pass,"Strategy Sharpe should beat the benchmark, not just absolute return."
+benchmark,drawdown_vs_spy,-0.1564 vs -0.3372,less severe than SPY,pass,Drawdown is materially smaller than the benchmark in the saved run.
+inference,bootstrap_sharpe_ci_low,0.8931151523,> 0.75,pass,"Bootstrap interval resamples months; this is descriptive uncertainty, not a proof."
+negative_control,sign_flip_sharpe_p_value,0.0000000000,< 0.05,pass,Preserving magnitudes but randomizing return signs rarely matches the observed Sharpe.
+walk_forward,expanding_window_positive_sharpe_years,5/6,>= 75%,pass,Mean walk-forward Sharpe is 1.437; worst year is -0.605.
+walk_forward,selected_candidate_positive_sharpe_years,8/9,>= 75%,pass,Selected-candidate table reports worst yearly Sharpe of -0.605.
+walk_forward,worst_year_sharpe,-0.6052,> -1.0,pass,Weak years are retained rather than filtered out.
+sensitivity,local_grid_min_sharpe,1.4031,> 1.0,pass,The 3x3 top-quantile/cost grid stays above a Sharpe of 1.
+costs,selected_10bps_cost_sharpe,1.4236,> 1.0,pass,The selected configuration survives a 10 bps cost assumption.
+capacity,twenty_x_cost_proxy_sharpe,1.3568,> 1.0,pass,Capacity is only a cost proxy; it is not a calibrated market-impact model.
+factor_risk,momentum_dominance_share,1.0000,< 0.90 preferred,warn,"The selected run is momentum-dominated, which is a concentration risk."
+data_hygiene,point_in_time_universe,not_available,required for production-grade evidence,fail,The default universe is not point-in-time and may contain survivorship bias.
+audit,full_selected_holdings,not_pinned,required for full replication,warn,Committed holdings audit files verify schema; scripts/export_medium_alpha_selected_audit.py exports the full audit from a pinned price panel.

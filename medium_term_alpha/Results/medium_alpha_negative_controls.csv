@@ -1,0 +1,2 @@
+control,observed_annualized_sharpe,control_mean_annualized_sharpe,control_p95_annualized_sharpe,p_value_control_sharpe_ge_observed,observed_total_return,control_p95_total_return,p_value_control_total_return_ge_observed,samples,interpretation
+monthly_return_sign_flip,1.5322387538,0.0047468697,0.5728741236,0.0000000000,3.2240976506,0.7169603455,0.0000000000,5000,Tests whether the saved monthly return signs matter after preserving return magnitudes.

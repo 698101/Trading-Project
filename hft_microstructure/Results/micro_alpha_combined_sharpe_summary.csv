@@ -1,0 +1,3 @@
+scope,sessions,total_pnl_bps,avg_daily_return_bps,minute_sharpe,daily_sharpe,annualized_daily_sharpe,worst_drawdown_bps,trade_count
+baseline_mm_only,51,32193.381000,631.242765,0.512696447931,2.529443364886,40.153668593471,-14.300815,78070
+selected_mm_only,51,30836.398400,604.635263,0.578782351093,2.511796715132,39.873536713128,-13.737053,69534

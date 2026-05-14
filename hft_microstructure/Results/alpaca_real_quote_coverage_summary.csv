@@ -1,0 +1,4 @@
+symbol,start_date,end_date,expected_weekdays,ok_before,ok_after,repair_candidates,attempted_downloads,successful_downloads,failed_dates,manifest,quote_dir
+SPY,2026-03-01,2026-05-12,51,36,51,15,15,15,,hft_microstructure/Results/alpaca_spy_quote_manifest.csv,Portfolio Quotes/SPY_open60
+QQQ,2026-03-01,2026-05-12,51,30,51,21,21,21,,hft_microstructure/Results/alpaca_qqq_quote_manifest.csv,Portfolio Quotes/QQQ_open60
+IWM,2026-03-01,2026-05-12,51,20,51,31,31,31,,hft_microstructure/Results/alpaca_iwm_quote_manifest.csv,Portfolio Quotes/IWM_open60

@@ -1,0 +1,41 @@
+*.exe
+hft_microstructure/hft_portfolio
+*.obj
+*.pdb
+*.ilk
+build/
+__pycache__/
+.pytest_cache/
+.matplotlib_cache/
+*.pyc
+.ipynb_checkpoints/
+*.zip
+*.parquet
+*.feather
+*.h5
+*.pkl
+raw_data/
+large_data/
+temp/
+.env
+venv/
+.venv/
+.pip_tmp/
+Portfolio Quotes/
+**/quotes/
+*.log
+*.tmp
+*.bak
+*.old
+*.orig
+*.copy
+*.swp
+.DS_Store
+Thumbs.db
+tmp_*/
+validation_*/
+Results_sample/
+Plots_sample/
+*_path_check*
+* - Copy*
+Copy of *

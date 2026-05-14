@@ -1,0 +1,8 @@
+variant,source_data,total_pnl_bps,trade_count,max_drawdown_bps,average_pnl_per_trade_bps,win_rate,minute_sharpe,notes
+full_portfolio_default,synthetic_demo_quotes,10.4412,92.0,0.0,0.11349130434782609,1.0,0.9854,Default full portfolio on synthetic demo quotes.
+market_making_only,synthetic_demo_quotes,11.2235,92.0,0.0,0.1219945652173913,1.0,0.9855,Runs only the market-making sleeve.
+liquidity_detection_only,synthetic_demo_quotes,0.0,0.0,0.0,0.0,0.0,0.0,Runs only the liquidity-detection sleeve when its own signal fires.
+momentum_ignition_only,synthetic_demo_quotes,0.0,0.0,0.0,0.0,0.0,0.0,Runs only the momentum-ignition sleeve when its own signal fires.
+defensive_decision_engine,synthetic_demo_quotes,7.4445,92.0,0.0,0.08091847826086956,1.0,0.9634,"Applies HMM, Hawkes-style intensity, and volatility controls."
+portfolio_low_edge_gate_disabled,synthetic_demo_quotes,10.4412,92.0,0.0,0.11349130434782609,1.0,0.9854,Disables the portfolio-level low-edge gate; strategy-internal edge filters remain active.
+gross_exposure_cap_relaxed,synthetic_demo_quotes,10.4412,92.0,0.0,0.11349130434782609,1.0,0.9854,Relaxes the gross exposure cap for diagnostics; default remains 1.0.

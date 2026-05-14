@@ -1,0 +1,4 @@
+symbol,quote_dir,manifest,ok_sessions,backtest_sessions,full_total_pnl_bps,full_minute_sharpe,full_worst_drawdown_bps,full_trade_count,full_latency_expired_signals,mm_total_pnl_bps,mm_minute_sharpe,mm_worst_drawdown_bps,mm_trade_count,mm_latency_expired_signals,status
+SPY,Portfolio Quotes/SPY_open60,hft_microstructure/Results/alpaca_spy_quote_manifest.csv,51,51,11372.986500,0.635252582814,-20.361615,29632,0,14323.515700,0.761093435981,-8.608548,25743,0,ok
+QQQ,Portfolio Quotes/QQQ_open60,hft_microstructure/Results/alpaca_qqq_quote_manifest.csv,51,51,8471.387100,0.426441419191,-15.236759,39431,0,11660.652700,0.453262584975,-14.300815,35247,0,ok
+IWM,Portfolio Quotes/IWM_open60,hft_microstructure/Results/alpaca_iwm_quote_manifest.csv,51,51,4180.593800,0.255022945980,-18.963379,20656,0,6209.212600,0.381904853326,-12.155251,17080,0,ok
