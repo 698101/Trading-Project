@@ -147,7 +147,8 @@ Current demo artifact counts:
 
 ## Reading The Plots
 
-- `Plots/hft_report.png` and `Plots/hft_real_quote_dashboard.png`: dark real-quote dashboard for 51-session SPY/QQQ/IWM baseline, confidence intervals, and stress boundary.
+- `Plots/hft_report.png` and `Plots/hft_real_quote_dashboard.png`: dark real-quote dashboard for 51-session SPY/QQQ/IWM baseline, selected quality-gate Sharpe, confidence intervals, and stress boundary.
+- `Plots/hft_micro_alpha_quality_sharpe.png`: selected market-making quality-gate summary showing the 2.876 combined daily Sharpe and 0.601 combined minute Sharpe.
 - `Plots/hft_cross_symbol_cumulative_pnl.png`: cumulative full and market-making-only PnL curves by symbol.
 - `Plots/hft_daily_pnl_bars.png`: daily full-portfolio PnL bars for SPY, QQQ, and IWM.
 - `Plots/hft_adverse_selection_stress.png`: PnL and minute Sharpe decay under 0 to 2 bps adverse-selection penalties.

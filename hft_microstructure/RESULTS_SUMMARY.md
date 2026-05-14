@@ -262,6 +262,7 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Results/latency_sensitivity.csv`
 - `Plots/hft_report.png`
 - `Plots/hft_real_quote_dashboard.png`
+- `Plots/hft_micro_alpha_quality_sharpe.png`
 - `Plots/hft_cross_symbol_cumulative_pnl.png`
 - `Plots/hft_daily_pnl_bars.png`
 - `Plots/hft_adverse_selection_stress.png`

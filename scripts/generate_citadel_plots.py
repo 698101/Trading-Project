@@ -163,6 +163,25 @@ def hft_summary() -> pd.DataFrame:
     return frame
 
 
+def hft_quality_summary() -> pd.DataFrame:
+    frame = read_csv(HFT_RESULTS / "micro_alpha_quality_sharpe_summary.csv")
+    numeric_cols = [
+        "min_edge_bps",
+        "mm_min_entry_microprice_edge_100ms_bps",
+        "mm_min_entry_spread_100ms_bps",
+        "minute_sharpe",
+        "daily_sharpe",
+        "annualized_daily_sharpe",
+        "total_pnl_bps",
+        "worst_drawdown_bps",
+        "trade_count",
+    ]
+    for col in numeric_cols:
+        if col in frame:
+            frame[col] = clean_num(frame[col])
+    return frame
+
+
 def hft_evidence_ci() -> pd.DataFrame:
     frame = read_csv(HFT_RESULTS / "real_quote_evidence_ci.csv")
     for col in [
@@ -212,30 +231,42 @@ def add_hft_title(fig: plt.Figure, subtitle: str) -> None:
 
 def plot_hft_dashboard() -> None:
     summary = hft_summary()
+    quality = hft_quality_summary()
+    quality_combined = quality[quality["scope"] == "combined"].iloc[0]
+    quality_symbols = quality[quality["scope"] == "selected_quality"].set_index("symbol")
     ci = hft_evidence_ci()
     stress = pd.concat([hft_stress(symbol) for symbol in SYMBOL_COLORS], ignore_index=True)
 
     fig = plt.figure(figsize=(17, 10.5))
     grid = fig.add_gridspec(2, 3, height_ratios=[1.0, 1.0])
-    add_hft_title(fig, "51 complete open-window sessions, 2026-03-02 to 2026-05-12. Minute Sharpe is not annualized.")
+    add_hft_title(
+        fig,
+        "51 open-window sessions. Selected quality-gate micro alpha: "
+        f"{quality_combined['minute_sharpe']:.3f} minute Sharpe, "
+        f"{quality_combined['daily_sharpe']:.3f} daily Sharpe.",
+    )
 
     ax_pnl = fig.add_subplot(grid[0, 0])
     x = np.arange(len(summary))
-    width = 0.36
-    ax_pnl.bar(x - width / 2, summary["full_total_pnl_bps"], width, label="Full portfolio", color=BLUE)
-    ax_pnl.bar(x + width / 2, summary["mm_total_pnl_bps"], width, label="Market making only", color=GREEN)
+    width = 0.25
+    quality_pnl = [quality_symbols.loc[symbol, "total_pnl_bps"] for symbol in summary["symbol"]]
+    ax_pnl.bar(x - width, summary["full_total_pnl_bps"], width, label="Full portfolio", color=BLUE)
+    ax_pnl.bar(x, summary["mm_total_pnl_bps"], width, label="Baseline mm-only", color=GREEN)
+    ax_pnl.bar(x + width, quality_pnl, width, label="Selected quality gate", color=AMBER)
     ax_pnl.set_xticks(x)
     ax_pnl.set_xticklabels(summary["symbol"])
-    style_ax(ax_pnl, "Baseline Total PnL", "Symbol", "Total PnL (bps)")
+    style_ax(ax_pnl, "Total PnL: Baseline vs Quality Gate", "Symbol", "Total PnL (bps)")
     line_legend(ax_pnl, ncol=1)
 
     ax_sharpe = fig.add_subplot(grid[0, 1])
-    ax_sharpe.bar(x - width / 2, summary["full_minute_sharpe"], width, label="Full portfolio", color=BLUE)
-    ax_sharpe.bar(x + width / 2, summary["mm_minute_sharpe"], width, label="Market making only", color=GREEN)
+    quality_sharpe = [quality_symbols.loc[symbol, "minute_sharpe"] for symbol in summary["symbol"]]
+    ax_sharpe.bar(x - width, summary["full_minute_sharpe"], width, label="Full portfolio", color=BLUE)
+    ax_sharpe.bar(x, summary["mm_minute_sharpe"], width, label="Baseline mm-only", color=GREEN)
+    ax_sharpe.bar(x + width, quality_sharpe, width, label="Selected quality gate", color=AMBER)
     ax_sharpe.axhline(0.0, color=MUTED, linewidth=1)
     ax_sharpe.set_xticks(x)
     ax_sharpe.set_xticklabels(summary["symbol"])
-    style_ax(ax_sharpe, "Minute Sharpe By Symbol", "Symbol", "Minute Sharpe")
+    style_ax(ax_sharpe, "Minute Sharpe: Baseline vs Quality Gate", "Symbol", "Minute Sharpe")
     line_legend(ax_sharpe, ncol=1)
 
     ax_ci = fig.add_subplot(grid[0, 2])
@@ -271,22 +302,124 @@ def plot_hft_dashboard() -> None:
     ax_text = fig.add_subplot(grid[1, 2])
     ax_text.set_facecolor(PANEL)
     ax_text.set_axis_off()
+    baseline = quality[quality["scope"] == "original_mm_baseline"].iloc[0]
+    minute_delta = float(quality_combined["minute_sharpe"] - baseline["minute_sharpe"])
+    trade_delta = float(quality_combined["trade_count"] - baseline["trade_count"])
+    trade_pct = trade_delta / float(baseline["trade_count"])
     lines = [
+        ("Quality", f"daily Sharpe {quality_combined['daily_sharpe']:.3f}, minute Sharpe {quality_combined['minute_sharpe']:.3f}", AMBER),
+        ("Improvement", f"+{minute_delta:.3f} minute Sharpe, {trade_pct * 100:.1f}% trades", GREEN),
         ("SPY", "survives 1 bps, fails at 2 bps", CYAN),
         ("QQQ", "survives 0.5 bps, fails around 1 bps", PURPLE),
         ("IWM", "full-mode marginal at 1 bps", AMBER),
-        ("Data", "top-of-book quote replay, not live fills", MUTED),
     ]
-    ax_text.text(0.04, 0.92, "Interview-Ready Interpretation", fontsize=16, fontweight="bold", color=WHITE)
-    y0 = 0.76
+    ax_text.text(0.04, 0.92, "Interview-Ready Interpretation", fontsize=15, fontweight="bold", color=WHITE)
+    y0 = 0.78
     for label, text, color in lines:
-        ax_text.text(0.06, y0, label, fontsize=15, color=color, fontweight="bold")
-        ax_text.text(0.27, y0, text, fontsize=12, color=TEXT)
-        y0 -= 0.18
+        ax_text.text(0.06, y0, label, fontsize=13, color=color, fontweight="bold")
+        ax_text.text(0.43, y0, text, fontsize=11, color=TEXT)
+        y0 -= 0.15
+    ax_text.text(0.06, 0.05, "Data: Alpaca IEX top-of-book quote replay, not live fills.", fontsize=10, color=MUTED)
 
     add_note(fig, "Generated from Alpaca IEX top-of-book quote replay summaries. Raw quotes are local and excluded from git.")
     save(fig, HFT_PLOTS / "hft_real_quote_dashboard.png")
     shutil.copy2(HFT_PLOTS / "hft_real_quote_dashboard.png", HFT_PLOTS / "hft_report.png")
+
+
+def plot_hft_micro_alpha_quality() -> None:
+    quality = hft_quality_summary()
+    versions = quality[quality["scope"].isin(["original_mm_baseline", "prior_edge_selected", "combined"])].copy()
+    label_map = {
+        "original_mm_baseline": "Original\nmm baseline",
+        "prior_edge_selected": "Prior\nedge-selected",
+        "combined": "Selected\nquality gate",
+    }
+    versions["label"] = versions["scope"].map(label_map)
+    symbol_rows = quality[quality["scope"] == "selected_quality"].copy()
+    baseline = quality[quality["scope"] == "original_mm_baseline"].iloc[0]
+    selected = quality[quality["scope"] == "combined"].iloc[0]
+    minute_delta = float(selected["minute_sharpe"] - baseline["minute_sharpe"])
+    pnl_delta = float(selected["total_pnl_bps"] - baseline["total_pnl_bps"])
+    trade_pct = float((selected["trade_count"] / baseline["trade_count"]) - 1.0)
+
+    fig = plt.figure(figsize=(16, 9))
+    grid = fig.add_gridspec(2, 3, width_ratios=[1.1, 1.1, 0.95])
+    fig.suptitle(
+        "Micro Alpha Quality-Gate Sharpe Improvement",
+        x=0.01,
+        y=0.995,
+        ha="left",
+        fontsize=22,
+        color=WHITE,
+        fontweight="bold",
+    )
+    fig.text(
+        0.01,
+        0.955,
+        "Selected SPY/QQQ quality gates and IWM edge floor, combined across SPY/QQQ/IWM daily PnL streams.",
+        color=MUTED,
+        ha="left",
+        fontsize=11,
+    )
+
+    ax_daily = fig.add_subplot(grid[0, 0])
+    bars = ax_daily.bar(versions["label"], versions["daily_sharpe"], color=[GREEN, CYAN, AMBER])
+    style_ax(ax_daily, "Combined Daily Sharpe", "Configuration", "Daily Sharpe")
+    ax_daily.axhline(0.0, color=MUTED, linewidth=1)
+    for bar, value in zip(bars, versions["daily_sharpe"]):
+        ax_daily.text(bar.get_x() + bar.get_width() / 2, value + 0.06, f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_minute = fig.add_subplot(grid[0, 1])
+    bars = ax_minute.bar(versions["label"], versions["minute_sharpe"], color=[GREEN, CYAN, AMBER])
+    style_ax(ax_minute, "Combined Minute Sharpe", "Configuration", "Minute Sharpe")
+    ax_minute.axhline(0.0, color=MUTED, linewidth=1)
+    for bar, value in zip(bars, versions["minute_sharpe"]):
+        ax_minute.text(bar.get_x() + bar.get_width() / 2, value + 0.015, f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_summary = fig.add_subplot(grid[0, 2])
+    ax_summary.set_axis_off()
+    summary_rows = [
+        ("Daily Sharpe", f"{selected['daily_sharpe']:.3f}", AMBER),
+        ("Minute Sharpe", f"{selected['minute_sharpe']:.3f}", AMBER),
+        ("Minute Sharpe Delta", f"+{minute_delta:.3f}", GREEN),
+        ("PnL Delta", f"{pnl_delta:+,.1f} bps", GREEN if pnl_delta >= 0 else RED),
+        ("Trade Count Change", f"{trade_pct * 100:+.1f}%", GREEN if trade_pct <= 0 else AMBER),
+    ]
+    ax_summary.text(0.03, 0.88, "Selected Combined Result", fontsize=15, color=WHITE, fontweight="bold")
+    y = 0.72
+    for label, value, color in summary_rows:
+        ax_summary.text(0.04, y, label, fontsize=11, color=MUTED)
+        ax_summary.text(0.96, y, value, fontsize=14, color=color, ha="right", fontweight="bold")
+        y -= 0.14
+
+    ax_symbol = fig.add_subplot(grid[1, :2])
+    symbol_x = np.arange(len(symbol_rows))
+    bars = ax_symbol.bar(symbol_x, symbol_rows["minute_sharpe"], color=[SYMBOL_COLORS.get(symbol, AMBER) for symbol in symbol_rows["symbol"]])
+    ax_symbol.set_xticks(symbol_x)
+    ax_symbol.set_xticklabels(symbol_rows["symbol"])
+    style_ax(ax_symbol, "Selected Quality-Gate Minute Sharpe By Symbol", "Symbol", "Minute Sharpe")
+    for bar, row in zip(bars, symbol_rows.itertuples()):
+        label = f"{row.minute_sharpe:.3f}\nedge {row.min_edge_bps:.2f}"
+        ax_symbol.text(bar.get_x() + bar.get_width() / 2, row.minute_sharpe + 0.02, label, ha="center", color=TEXT, fontsize=10)
+
+    ax_params = fig.add_subplot(grid[1, 2])
+    ax_params.set_axis_off()
+    ax_params.text(0.03, 0.88, "Quality Gates", fontsize=15, color=WHITE, fontweight="bold")
+    y = 0.70
+    for row in symbol_rows.itertuples():
+        ax_params.text(0.04, y, row.symbol, fontsize=12, color=SYMBOL_COLORS.get(row.symbol, TEXT), fontweight="bold")
+        ax_params.text(
+            0.26,
+            y,
+            f"edge {row.min_edge_bps:.2f}, micro {row.mm_min_entry_microprice_edge_100ms_bps:.2f}, spread {row.mm_min_entry_spread_100ms_bps:.2f}",
+            fontsize=10,
+            color=TEXT,
+        )
+        y -= 0.17
+    ax_params.text(0.04, 0.08, "Primary metric remains minute Sharpe; daily Sharpe is a combined-session diagnostic.", fontsize=10, color=MUTED)
+
+    add_note(fig, "Generated from micro_alpha_quality_sharpe_summary.csv. The 2.876 value is combined daily Sharpe across SPY, QQQ, and IWM daily PnL.")
+    save(fig, HFT_PLOTS / "hft_micro_alpha_quality_sharpe.png")
 
 
 def plot_hft_cumulative() -> None:
@@ -774,6 +907,7 @@ def plot_medium_factor_diagnostics() -> None:
 
 def generate_hft_plots() -> None:
     plot_hft_dashboard()
+    plot_hft_micro_alpha_quality()
     plot_hft_cumulative()
     plot_hft_daily_bars()
     plot_hft_stress()
