@@ -65,6 +65,7 @@ quant-trading-research-portfolio/
 |   |   |-- hft_real_quote_dashboard.png
 |   |   |-- hft_micro_alpha_quality_sharpe.png
 |   |   |-- hft_micro_alpha_validation.png
+|   |   |-- hft_micro_alpha_extended_validation.png
 |   |   |-- hft_cross_symbol_cumulative_pnl.png
 |   |   |-- hft_daily_pnl_bars.png
 |   |   |-- hft_adverse_selection_stress.png
@@ -200,6 +201,7 @@ The top-level scorecard is regenerated from committed CSV artifacts with:
 
 ```bash
 python3 scripts/analyze_micro_alpha_validation.py
+python3 scripts/summarize_micro_alpha_extended_validation.py
 python3 scripts/build_project_scorecard.py
 ```
 

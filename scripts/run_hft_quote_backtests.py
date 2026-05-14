@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import math
 import subprocess
 from pathlib import Path
@@ -16,6 +17,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--exe", default="hft_microstructure/hft_portfolio")
     parser.add_argument("--output-dir", default="build/alpaca_verification/real_quote_backtest")
     parser.add_argument("--max-sessions", type=int, default=30)
+    parser.add_argument("--start-date", default="", help="Optional YYYY-MM-DD lower date bound.")
+    parser.add_argument("--end-date", default="", help="Optional YYYY-MM-DD upper date bound.")
     parser.add_argument("--rolling-window", type=int, default=75)
     parser.add_argument("--min-edge-bps", type=float, default=0.20)
     parser.add_argument("--forecast-weight", type=float, default=0.70)
@@ -34,9 +37,27 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def read_manifest(path: Path, max_sessions: int) -> list[dict[str, str]]:
+def parse_date(value: str) -> dt.date | None:
+    return dt.datetime.strptime(value, "%Y-%m-%d").date() if value else None
+
+
+def read_manifest(
+    path: Path,
+    max_sessions: int,
+    start_date: dt.date | None = None,
+    end_date: dt.date | None = None,
+) -> list[dict[str, str]]:
     with path.open(newline="") as handle:
-        rows = [row for row in csv.DictReader(handle) if row["status"] == "ok"]
+        rows = []
+        for row in csv.DictReader(handle):
+            if row["status"] != "ok":
+                continue
+            row_date = parse_date(row.get("date", ""))
+            if start_date is not None and (row_date is None or row_date < start_date):
+                continue
+            if end_date is not None and (row_date is None or row_date > end_date):
+                continue
+            rows.append(row)
     return rows[:max_sessions]
 
 
@@ -164,7 +185,12 @@ def main() -> int:
     args = parse_args()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    rows = read_manifest(Path(args.manifest), args.max_sessions)
+    rows = read_manifest(
+        Path(args.manifest),
+        args.max_sessions,
+        start_date=parse_date(args.start_date),
+        end_date=parse_date(args.end_date),
+    )
     if not rows:
         raise SystemExit("No ok quote sessions found in manifest.")
 

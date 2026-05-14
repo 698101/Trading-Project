@@ -28,7 +28,7 @@ The main HFT evidence is not the headline PnL. It is the stress boundary:
 - IWM full-mode is positive through 0.5 bps, marginal around 1 bps, and fails at 2 bps; market-making-only survives 1 bps and fails at 2 bps.
 - Signal-latency sweeps exist for SPY, QQQ, and IWM and record expired signals explicitly.
 
-The latest micro-alpha improvement is the selected market-making quality gate. It raises combined SPY/QQQ/IWM minute Sharpe from 0.513 to 0.601 and combined daily Sharpe from 2.529 to 2.876. A chronological train/OOS sanity check now retains 0.584 OOS minute Sharpe and 3.733 OOS daily Sharpe over the later 20 sessions, but this should still be treated as a local validation check rather than a fully untouched future holdout.
+The latest micro-alpha improvement is the selected market-making quality gate. It raises combined SPY/QQQ/IWM minute Sharpe from 0.513 to 0.601 and combined daily Sharpe from 2.529 to 2.876. A chronological train/OOS sanity check now retains 0.584 OOS minute Sharpe and 3.733 OOS daily Sharpe over the later 20 sessions. A post-cutoff two-session SPY/QQQ/IWM check remains positive at 0.702 minute Sharpe, and a no-retune AAPL transfer check is positive but weak at 0.175 minute Sharpe. These should still be treated as local validation checks rather than fully untouched production evidence.
 
 Primary files:
 
@@ -38,6 +38,7 @@ Primary files:
 - `hft_microstructure/Results/real_quote_robustness_report.md`
 - `hft_microstructure/Results/micro_alpha_quality_sharpe_report.md`
 - `hft_microstructure/Results/micro_alpha_validation_report.md`
+- `hft_microstructure/Results/micro_alpha_extended_validation_report.md`
 - `hft_microstructure/Results/alpaca_spy_real_quote_stress_distribution_summary.csv`
 - `hft_microstructure/Results/alpaca_qqq_real_quote_stress_distribution_summary.csv`
 - `hft_microstructure/Results/alpaca_iwm_real_quote_stress_distribution_summary.csv`

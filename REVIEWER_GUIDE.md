@@ -13,7 +13,7 @@ This guide is a short path through the repo for quant/HFT recruiters and intervi
 
 | Project | Historical / Selected Evidence | Audit / Demo Evidence |
 |---|---|---|
-| HFT microstructure | `hft_microstructure/Results/results_summary.csv`, `daily_results.csv`, `decision_engine_comparison.csv`, `strategy_sleeve_monte_carlo.csv`; restored Alpaca verification in `alpaca_real_quote_cross_symbol_summary.csv`, `alpaca_real_quote_cross_symbol_manifest_summary.csv`, `real_quote_evidence_ci.csv`, `real_quote_robustness_report.md`, `micro_alpha_quality_sharpe_report.md`, `micro_alpha_validation_report.md`, per-symbol manifests/results for SPY, QQQ, and IWM, plus SPY/QQQ/IWM stress and latency files | `trade_log.csv`, `rejected_signals.csv`, `ablation_results.csv`, `latency_sensitivity.csv` generated from `demo_quotes_synthetic.csv` |
+| HFT microstructure | `hft_microstructure/Results/results_summary.csv`, `daily_results.csv`, `decision_engine_comparison.csv`, `strategy_sleeve_monte_carlo.csv`; restored Alpaca verification in `alpaca_real_quote_cross_symbol_summary.csv`, `alpaca_real_quote_cross_symbol_manifest_summary.csv`, `real_quote_evidence_ci.csv`, `real_quote_robustness_report.md`, `micro_alpha_quality_sharpe_report.md`, `micro_alpha_validation_report.md`, `micro_alpha_extended_validation_report.md`, per-symbol manifests/results for SPY, QQQ, and IWM, plus SPY/QQQ/IWM stress and latency files | `trade_log.csv`, `rejected_signals.csv`, `ablation_results.csv`, `latency_sensitivity.csv` generated from `demo_quotes_synthetic.csv` |
 | Medium-term alpha | `medium_term_alpha/Results/results_summary.csv`, `benchmark_comparison.csv`, `selected_default_metrics.csv`, `walk_forward_results.csv`, `sensitivity_results.csv`, `capacity_simulation.csv`, `medium_alpha_bootstrap_ci.csv`, `medium_alpha_negative_controls.csv`, `medium_alpha_robustness_scorecard.csv`, `medium_alpha_robustness_report.md` | `portfolio_weights.csv`, `rebalance_log.csv`, `daily_strategy_returns.csv`, `benchmark_timeseries.csv` generated from `sample_prices.csv` |
 
 Pinned selected-run configs live in `configs/`.
@@ -63,6 +63,7 @@ python3 scripts/export_medium_alpha_selected_audit.py --csv /path/to/pinned_full
 - The true latency sensitivity tables show modest delays expiring some signals without collapsing the SPY/QQQ/IWM edge on this 51-session cut; that is useful but should not be oversold.
 - IWM now has the same 51-session stress/latency evidence, but its baseline minute Sharpe remains materially weaker than SPY/QQQ.
 - The selected micro-alpha quality gate has a chronological OOS sanity check: 0.584 OOS minute Sharpe and 3.733 OOS daily Sharpe over the later 20 sessions.
+- Fresh post-cutoff SPY/QQQ/IWM validation on 2026-05-13 and 2026-05-14 is positive, but too small to carry a broad claim; the no-retune AAPL transfer check is positive but weak.
 - HFT trade logs, rejected signals, ablations, and adverse-selection stress are real simulator outputs from synthetic demo quotes, not historical performance evidence.
 - HFT `latency_sensitivity.csv` is proxy adverse-selection stress, not true timestamp-shift latency modelling.
 - Medium-term headline metrics are saved selected-default evidence.

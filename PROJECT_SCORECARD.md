@@ -40,6 +40,15 @@ Chronological validation sanity check:
 
 Selected quality gate OOS minute Sharpe improvement vs original mm baseline: +0.129.
 
+Extended validation:
+
+| Scope | Symbol | Sessions | Dates | Minute Sharpe | Daily Sharpe | Total PnL |
+| --- | --- | --- | --- | --- | --- | --- |
+| Fresh core OOS | SPY_QQQ_IWM | 2 | 2026-05-13 to 2026-05-14 | 0.702 | 3.978 | 1,153.1 bps |
+| No-retune transfer | AAPL | 5 | 2026-05-01 to 2026-05-07 | 0.175 | 1.563 | 47.9 bps |
+
+Fresh core validation is post-cutoff but only two sessions; the AAPL transfer test is no-retune and directionally positive but weak.
+
 Current boundary: this is Alpaca IEX top-of-book evidence over 51 SPY/QQQ/IWM open-window sessions, not full depth-of-book or live fills.
 
 ## Medium Alpha

@@ -1,0 +1,3 @@
+date,symbol,file_path,row_count,first_timestamp_ns,last_timestamp_ns,duration_minutes,min_bid,max_ask,mean_spread,median_spread,min_spread,max_spread,status
+2026-05-13,SPY,/home/boss1000/Projects/HFT Training/Portfolio Quotes/SPY_open60/spy_2026_05_13.csv,359675,1778679000012682979,1778682599603710689,59.9932,716.290000,760.650000,3.76464573,3.80698582,0.13537020,600.70145030,ok
+2026-05-14,SPY,/home/boss1000/Projects/HFT Training/Portfolio Quotes/SPY_open60/spy_2026_05_14.csv,400462,1778765400015086194,1778768999945745014,59.9988,721.410000,766.100000,3.11141970,1.20730014,0.13398629,600.86991012,ok

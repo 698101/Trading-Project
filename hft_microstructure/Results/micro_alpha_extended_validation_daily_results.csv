@@ -1,0 +1,12 @@
+scope,symbol,date,total_net_return_bps,completed_trades,minute_return_sharpe,max_drawdown_bps,source_daily_results
+fresh_core_oos,SPY,2026-05-13,188.3134,216,1.0143,2.2628,build/fresh_oos_20260513_14/spy_quality/daily_results.csv
+fresh_core_oos,SPY,2026-05-14,359.6724,409,1.1565,1.9662,build/fresh_oos_20260513_14/spy_quality/daily_results.csv
+fresh_core_oos,QQQ,2026-05-13,279.8292,796,1.0049,4.7586,build/fresh_oos_20260513_14/qqq_quality/daily_results.csv
+fresh_core_oos,QQQ,2026-05-14,252.9874,512,0.7490,3.6446,build/fresh_oos_20260513_14/qqq_quality/daily_results.csv
+fresh_core_oos,IWM,2026-05-13,5.9078,46,0.0862,3.5691,build/fresh_oos_20260513_14/iwm_quality/daily_results.csv
+fresh_core_oos,IWM,2026-05-14,66.3805,165,0.3426,10.1275,build/fresh_oos_20260513_14/iwm_quality/daily_results.csv
+transfer_symbol,AAPL,2026-05-01,0.8118,2,0.1835,0.0000,build/transfer_oos_202605/aapl_quality/daily_results.csv
+transfer_symbol,AAPL,2026-05-04,14.3558,48,0.2647,1.6590,build/transfer_oos_202605/aapl_quality/daily_results.csv
+transfer_symbol,AAPL,2026-05-05,8.4012,11,0.1250,0.9624,build/transfer_oos_202605/aapl_quality/daily_results.csv
+transfer_symbol,AAPL,2026-05-06,16.3917,62,0.2769,1.6572,build/transfer_oos_202605/aapl_quality/daily_results.csv
+transfer_symbol,AAPL,2026-05-07,7.9200,5,0.1255,0.4905,build/transfer_oos_202605/aapl_quality/daily_results.csv

@@ -54,6 +54,9 @@
     "summary_csv": "hft_microstructure/Results/micro_alpha_quality_sharpe_summary.csv",
     "report_md": "hft_microstructure/Results/micro_alpha_quality_sharpe_report.md",
     "validation_summary_csv": "hft_microstructure/Results/micro_alpha_validation_summary.csv",
-    "validation_report_md": "hft_microstructure/Results/micro_alpha_validation_report.md"
+    "validation_report_md": "hft_microstructure/Results/micro_alpha_validation_report.md",
+    "extended_validation_summary_csv": "hft_microstructure/Results/micro_alpha_extended_validation_summary.csv",
+    "extended_validation_daily_results_csv": "hft_microstructure/Results/micro_alpha_extended_validation_daily_results.csv",
+    "extended_validation_report_md": "hft_microstructure/Results/micro_alpha_extended_validation_report.md"
   }
 }

@@ -17,6 +17,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start-date", required=True)
     parser.add_argument("--end-date", required=True)
     parser.add_argument("--window-minutes", type=int, default=60)
+    parser.add_argument("--window-start-minutes-after-open", type=int, default=0)
     parser.add_argument("--chunk-minutes", type=int, default=5)
     parser.add_argument("--feed", default="iex")
     parser.add_argument("--quote-base-dir", default="Portfolio Quotes")
@@ -113,8 +114,10 @@ def manifest_path(results_dir: Path, symbol: str) -> Path:
     return results_dir / f"alpaca_{symbol.lower()}_quote_manifest.csv"
 
 
-def quote_dir(base_dir: Path, symbol: str, window_minutes: int) -> Path:
-    return base_dir / f"{symbol}_open{window_minutes}"
+def quote_dir(base_dir: Path, symbol: str, window_minutes: int, start_offset_minutes: int = 0) -> Path:
+    if start_offset_minutes <= 0:
+        return base_dir / f"{symbol}_open{window_minutes}"
+    return base_dir / f"{symbol}_open_plus_{start_offset_minutes}m_{window_minutes}"
 
 
 def quote_path(directory: Path, symbol: str, day: dt.date) -> Path:
@@ -129,7 +132,7 @@ def build_manifest(args: argparse.Namespace, symbol: str) -> Path:
             "python3",
             args.manifest_script,
             "--quote-dir",
-            str(quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes)),
+            str(quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes, args.window_start_minutes_after_open)),
             "--output-path",
             str(path),
             "--min-duration-minutes",
@@ -178,7 +181,9 @@ def download_day(args: argparse.Namespace, symbol: str, day: dt.date) -> bool:
         "--chunk-minutes",
         str(args.chunk_minutes),
         "--output-dir",
-        str(quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes)),
+        str(quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes, args.window_start_minutes_after_open)),
+        "--window-start-minutes-after-open",
+        str(args.window_start_minutes_after_open),
         "--feed",
         args.feed,
         "--limit",
@@ -218,7 +223,7 @@ def main() -> int:
 
     for symbol in split_csv(args.symbols):
         print(f"repair_symbol symbol={symbol}", flush=True)
-        qdir = quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes)
+        qdir = quote_dir(Path(args.quote_base_dir), symbol, args.window_minutes, args.window_start_minutes_after_open)
         qdir.mkdir(parents=True, exist_ok=True)
         current_manifest = build_manifest(args, symbol)
         statuses = read_statuses(current_manifest)

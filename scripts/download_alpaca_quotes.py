@@ -29,6 +29,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--end-date", required=True, help="YYYY-MM-DD, inclusive")
     parser.add_argument("--window-minutes", type=int, default=60)
     parser.add_argument(
+        "--window-start-minutes-after-open",
+        type=int,
+        default=0,
+        help="Start the download window this many minutes after the NYSE open.",
+    )
+    parser.add_argument(
         "--chunk-minutes",
         type=int,
         default=0,
@@ -66,19 +72,25 @@ def business_dates(start: dt.date, end: dt.date) -> list[dt.date]:
     return dates
 
 
-def market_window_start_utc(day: dt.date, fixed_1330_utc: bool) -> dt.datetime:
+def market_window_start_utc(day: dt.date, fixed_1330_utc: bool, start_offset_minutes: int = 0) -> dt.datetime:
     if fixed_1330_utc:
-        return dt.datetime.combine(day, dt.time(13, 30), tzinfo=dt.timezone.utc)
+        start = dt.datetime.combine(day, dt.time(13, 30), tzinfo=dt.timezone.utc)
+        return start + dt.timedelta(minutes=start_offset_minutes)
     start = dt.datetime.combine(day, dt.time(9, 30), tzinfo=ZoneInfo("America/New_York"))
-    return start.astimezone(dt.timezone.utc)
+    return start.astimezone(dt.timezone.utc) + dt.timedelta(minutes=start_offset_minutes)
 
 
 def datetime_to_api(value: dt.datetime) -> str:
     return value.isoformat().replace("+00:00", "Z")
 
 
-def market_window_utc(day: dt.date, minutes: int, fixed_1330_utc: bool) -> tuple[str, str]:
-    start = market_window_start_utc(day, fixed_1330_utc)
+def market_window_utc(
+    day: dt.date,
+    minutes: int,
+    fixed_1330_utc: bool,
+    start_offset_minutes: int = 0,
+) -> tuple[str, str]:
+    start = market_window_start_utc(day, fixed_1330_utc, start_offset_minutes)
     end = start + dt.timedelta(minutes=minutes)
     return datetime_to_api(start), datetime_to_api(end)
 
@@ -88,8 +100,9 @@ def chunked_market_windows_utc(
     window_minutes: int,
     chunk_minutes: int,
     fixed_1330_utc: bool,
+    start_offset_minutes: int = 0,
 ) -> list[tuple[str, str]]:
-    start = market_window_start_utc(day, fixed_1330_utc)
+    start = market_window_start_utc(day, fixed_1330_utc, start_offset_minutes)
     end = start + dt.timedelta(minutes=window_minutes)
     if chunk_minutes <= 0 or chunk_minutes >= window_minutes:
         return [(datetime_to_api(start), datetime_to_api(end))]
@@ -168,6 +181,7 @@ def download_day(
     window_minutes: int,
     chunk_minutes: int,
     fixed_1330_utc: bool,
+    window_start_minutes_after_open: int,
     sleep_seconds: float,
     request_retries: int,
     retry_sleep_seconds: float,
@@ -175,7 +189,13 @@ def download_day(
     timeout_seconds: float,
     progress_pages: int,
 ) -> int:
-    windows = chunked_market_windows_utc(day, window_minutes, chunk_minutes, fixed_1330_utc)
+    windows = chunked_market_windows_utc(
+        day,
+        window_minutes,
+        chunk_minutes,
+        fixed_1330_utc,
+        window_start_minutes_after_open,
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     total_pages = 0
@@ -284,6 +304,7 @@ def main() -> int:
                 window_minutes=args.window_minutes,
                 chunk_minutes=args.chunk_minutes,
                 fixed_1330_utc=args.fixed_1330_utc,
+                window_start_minutes_after_open=args.window_start_minutes_after_open,
                 sleep_seconds=args.sleep_seconds,
                 request_retries=args.request_retries,
                 retry_sleep_seconds=args.retry_sleep_seconds,

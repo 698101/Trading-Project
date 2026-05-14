@@ -93,6 +93,7 @@ def build_micro_section(root: Path) -> list[str]:
     results_dir = root / "hft_microstructure" / "Results"
     quality_rows = read_csv(results_dir / "micro_alpha_quality_sharpe_summary.csv")
     validation_rows = read_csv(results_dir / "micro_alpha_validation_summary.csv")
+    extended_rows = read_csv(results_dir / "micro_alpha_extended_validation_summary.csv")
     baseline = find_row(quality_rows, scope="original_mm_baseline")
     quality = find_row(quality_rows, scope="combined")
     prior = find_row(quality_rows, scope="prior_edge_selected")
@@ -196,6 +197,38 @@ def build_micro_section(root: Path) -> list[str]:
             [
                 "",
                 f"Selected quality gate OOS minute Sharpe improvement vs original mm baseline: {oos_minute_delta:+.3f}.",
+                "",
+            ]
+        )
+    if extended_rows:
+        fresh_core = find_row(extended_rows, scope="fresh_core_oos", symbol="SPY_QQQ_IWM")
+        transfer = find_row(extended_rows, scope="transfer_symbol", symbol="AAPL")
+        extended_table = [
+            {
+                "Scope": "Fresh core OOS",
+                "Symbol": "SPY_QQQ_IWM",
+                "Sessions": fresh_core.get("sessions", ""),
+                "Dates": f"{fresh_core.get('start_date', '')} to {fresh_core.get('end_date', '')}",
+                "Minute Sharpe": fmt(fresh_core.get("minute_sharpe")),
+                "Daily Sharpe": fmt(fresh_core.get("daily_sharpe")),
+                "Total PnL": fmt_bps(fresh_core.get("total_pnl_bps")),
+            },
+            {
+                "Scope": "No-retune transfer",
+                "Symbol": "AAPL",
+                "Sessions": transfer.get("sessions", ""),
+                "Dates": f"{transfer.get('start_date', '')} to {transfer.get('end_date', '')}",
+                "Minute Sharpe": fmt(transfer.get("minute_sharpe")),
+                "Daily Sharpe": fmt(transfer.get("daily_sharpe")),
+                "Total PnL": fmt_bps(transfer.get("total_pnl_bps")),
+            },
+        ]
+        lines.extend(["Extended validation:", ""])
+        lines.extend(markdown_table(extended_table, list(extended_table[0].keys())))
+        lines.extend(
+            [
+                "",
+                "Fresh core validation is post-cutoff but only two sessions; the AAPL transfer test is no-retune and directionally positive but weak.",
                 "",
             ]
         )

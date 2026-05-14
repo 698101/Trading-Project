@@ -25,6 +25,7 @@ download = load_script("download_alpaca_quotes")
 repair = load_script("repair_real_quote_data")
 analysis = load_script("analyze_real_quote_evidence")
 manifest = load_script("build_quote_manifest")
+quote_backtests = load_script("run_hft_quote_backtests")
 
 
 class DownloadWindowTests(unittest.TestCase):
@@ -33,6 +34,10 @@ class DownloadWindowTests(unittest.TestCase):
         after_dst = download.market_window_utc(dt.date(2026, 3, 9), 60, False)
         self.assertEqual(before_dst, ("2026-03-06T14:30:00Z", "2026-03-06T15:30:00Z"))
         self.assertEqual(after_dst, ("2026-03-09T13:30:00Z", "2026-03-09T14:30:00Z"))
+
+    def test_market_window_offset_starts_after_open(self) -> None:
+        midday = download.market_window_utc(dt.date(2026, 3, 9), 30, False, 150)
+        self.assertEqual(midday, ("2026-03-09T16:00:00Z", "2026-03-09T16:30:00Z"))
 
     def test_chunked_windows_cover_full_range(self) -> None:
         windows = download.chunked_market_windows_utc(dt.date(2026, 3, 9), 60, 5, False)
@@ -62,6 +67,7 @@ class DownloadWindowTests(unittest.TestCase):
                         window_minutes=60,
                         chunk_minutes=5,
                         fixed_1330_utc=False,
+                        window_start_minutes_after_open=0,
                         sleep_seconds=0.0,
                         request_retries=0,
                         retry_sleep_seconds=0.0,
@@ -112,6 +118,7 @@ class DownloadWindowTests(unittest.TestCase):
                     window_minutes=10,
                     chunk_minutes=5,
                     fixed_1330_utc=False,
+                    window_start_minutes_after_open=0,
                     sleep_seconds=0.0,
                     request_retries=0,
                     retry_sleep_seconds=0.0,
@@ -126,6 +133,11 @@ class DownloadWindowTests(unittest.TestCase):
 
 
 class RepairPlannerTests(unittest.TestCase):
+    def test_quote_dir_preserves_legacy_open_name_by_default(self) -> None:
+        base = Path("Portfolio Quotes")
+        self.assertEqual(repair.quote_dir(base, "SPY", 60), base / "SPY_open60")
+        self.assertEqual(repair.quote_dir(base, "SPY", 30, 150), base / "SPY_open_plus_150m_30")
+
     def test_business_dates_skip_weekends(self) -> None:
         dates = repair.business_dates(dt.date(2026, 3, 1), dt.date(2026, 3, 9))
         self.assertEqual(
@@ -171,6 +183,23 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(manifest.status_with_duration("ok", 60.0, 55.0), "ok")
         self.assertEqual(manifest.status_with_duration("ok", 10.0, 55.0), "partial_window=10.00m")
         self.assertEqual(manifest.status_with_duration("empty", 0.0, 55.0), "empty")
+
+    def test_backtest_manifest_reader_filters_dates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "manifest.csv"
+            path.write_text(
+                "date,symbol,file_path,row_count,status\n"
+                "2026-05-12,SPY,a.csv,1,ok\n"
+                "2026-05-13,SPY,b.csv,1,ok\n"
+                "2026-05-14,SPY,c.csv,1,partial_window=10.00m\n"
+            )
+            rows = quote_backtests.read_manifest(
+                path,
+                max_sessions=10,
+                start_date=dt.date(2026, 5, 13),
+                end_date=dt.date(2026, 5, 14),
+            )
+            self.assertEqual([row["date"] for row in rows], ["2026-05-13"])
 
 
 class EvidenceAnalysisTests(unittest.TestCase):

@@ -22,6 +22,7 @@ def load_script(name: str):
 
 scorecard = load_script("build_project_scorecard")
 micro_validation = load_script("analyze_micro_alpha_validation")
+extended_validation = load_script("summarize_micro_alpha_extended_validation")
 
 
 class ReviewerDocsTests(unittest.TestCase):
@@ -43,6 +44,8 @@ class ReviewerDocsTests(unittest.TestCase):
         self.assertIn("2.876", text)
         self.assertIn("OOS", text)
         self.assertIn("0.584", text)
+        self.assertIn("Fresh core OOS", text)
+        self.assertIn("0.702", text)
         self.assertIn("Annualized Sharpe", text)
         self.assertIn("1.4505", text)
 
@@ -53,6 +56,22 @@ class ReviewerDocsTests(unittest.TestCase):
         )
         self.assertEqual(train, ["2026-03-02", "2026-03-03", "2026-03-04"])
         self.assertEqual(oos, ["2026-03-05"])
+
+    def test_extended_validation_formats_metrics(self) -> None:
+        row = extended_validation.format_metrics(
+            scope="demo",
+            label="Demo",
+            symbol="SPY",
+            daily_rows=[{"date": "2026-05-13"}, {"date": "2026-05-14"}],
+            daily_pnls=[1.0, 2.0],
+            intervals=[0.1, 0.2, 0.3],
+            trades=3,
+            source="demo.csv",
+        )
+        self.assertEqual(row["sessions"], 2)
+        self.assertEqual(row["start_date"], "2026-05-13")
+        self.assertEqual(row["end_date"], "2026-05-14")
+        self.assertEqual(row["trade_count"], 3)
 
 
 if __name__ == "__main__":

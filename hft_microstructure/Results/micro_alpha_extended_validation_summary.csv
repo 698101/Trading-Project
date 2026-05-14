@@ -1,0 +1,6 @@
+scope,label,symbol,sessions,start_date,end_date,total_pnl_bps,avg_daily_pnl_bps,daily_sharpe,annualized_daily_sharpe,minute_sharpe,worst_drawdown_bps,trade_count,source_daily_results
+fresh_core_oos,Fresh post-cutoff core symbols,SPY_QQQ_IWM,2,2026-05-13,2026-05-14,1153.090700,576.545350,3.977553300397,63.141701156135,0.701615601243,-5.965408,2144,build/fresh_oos_20260513_14/spy_quality/daily_results.csv;build/fresh_oos_20260513_14/qqq_quality/daily_results.csv;build/fresh_oos_20260513_14/iwm_quality/daily_results.csv
+fresh_core_oos,Fresh post-cutoff core symbols,SPY,2,2026-05-13,2026-05-14,547.985800,273.992900,2.261243793287,35.896132384361,1.017984680010,-1.152123,625,build/fresh_oos_20260513_14/spy_quality/daily_results.csv
+fresh_core_oos,Fresh post-cutoff core symbols,QQQ,2,2026-05-13,2026-05-14,532.816600,266.408300,14.036250586353,222.818570347642,0.863492329568,-2.348892,1308,build/fresh_oos_20260513_14/qqq_quality/daily_results.csv
+fresh_core_oos,Fresh post-cutoff core symbols,IWM,2,2026-05-13,2026-05-14,72.288300,36.144150,0.845266494310,13.418189613115,0.244470411370,-5.965408,211,build/fresh_oos_20260513_14/iwm_quality/daily_results.csv
+transfer_symbol,No-retune AAPL transfer,AAPL,5,2026-05-01,2026-05-07,47.880500,9.576100,1.562552540704,24.804752599048,0.175346666978,-1.339135,128,build/transfer_oos_202605/aapl_quality/daily_results.csv

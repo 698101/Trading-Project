@@ -200,6 +200,24 @@ def hft_validation_summary() -> pd.DataFrame:
     return frame
 
 
+def hft_extended_validation_summary() -> pd.DataFrame:
+    frame = read_csv(HFT_RESULTS / "micro_alpha_extended_validation_summary.csv")
+    numeric_cols = [
+        "sessions",
+        "total_pnl_bps",
+        "avg_daily_pnl_bps",
+        "daily_sharpe",
+        "annualized_daily_sharpe",
+        "minute_sharpe",
+        "worst_drawdown_bps",
+        "trade_count",
+    ]
+    for col in numeric_cols:
+        if col in frame:
+            frame[col] = clean_num(frame[col])
+    return frame
+
+
 def hft_evidence_ci() -> pd.DataFrame:
     frame = read_csv(HFT_RESULTS / "real_quote_evidence_ci.csv")
     for col in [
@@ -518,6 +536,61 @@ def plot_hft_micro_alpha_validation() -> None:
 
     add_note(fig, "Generated from micro_alpha_validation_summary.csv. Raw quote files remain local and excluded from git.")
     save(fig, HFT_PLOTS / "hft_micro_alpha_validation.png")
+
+
+def plot_hft_micro_alpha_extended_validation() -> None:
+    extended = hft_extended_validation_summary()
+    rows = extended[
+        ((extended["scope"] == "fresh_core_oos") & (extended["symbol"] == "SPY_QQQ_IWM"))
+        | ((extended["scope"] == "transfer_symbol") & (extended["symbol"] == "AAPL"))
+    ].copy()
+    rows["display_label"] = ["Fresh core\nSPY+QQQ+IWM", "No-retune\nAAPL transfer"]
+
+    fig = plt.figure(figsize=(14.5, 7.8))
+    grid = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 0.9])
+    fig.suptitle(
+        "Micro Alpha Extended Validation",
+        x=0.01,
+        y=0.995,
+        ha="left",
+        fontsize=22,
+        color=WHITE,
+        fontweight="bold",
+    )
+    fig.text(
+        0.01,
+        0.952,
+        "Fresh post-cutoff core sessions plus no-retune AAPL transfer check.",
+        color=MUTED,
+        ha="left",
+        fontsize=11,
+    )
+
+    colors = [GREEN, AMBER]
+    ax_sharpe = fig.add_subplot(grid[0, 0])
+    bars = ax_sharpe.bar(rows["display_label"], rows["minute_sharpe"], color=colors)
+    style_ax(ax_sharpe, "Minute Sharpe", "Validation cut", "Minute Sharpe")
+    for bar, value in zip(bars, rows["minute_sharpe"]):
+        ax_sharpe.text(bar.get_x() + bar.get_width() / 2, value + 0.025, f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_pnl = fig.add_subplot(grid[0, 1])
+    bars = ax_pnl.bar(rows["display_label"], rows["total_pnl_bps"], color=colors)
+    style_ax(ax_pnl, "Total PnL", "Validation cut", "Total PnL (bps)")
+    for bar, value in zip(bars, rows["total_pnl_bps"]):
+        ax_pnl.text(bar.get_x() + bar.get_width() / 2, value + 18, f"{value:,.1f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_read = fig.add_subplot(grid[0, 2])
+    ax_read.set_axis_off()
+    fresh = rows[rows["scope"] == "fresh_core_oos"].iloc[0]
+    transfer = rows[rows["scope"] == "transfer_symbol"].iloc[0]
+    ax_read.text(0.04, 0.86, "Read", fontsize=15, color=WHITE, fontweight="bold")
+    ax_read.text(0.05, 0.68, f"Fresh core: {int(fresh['sessions'])} post-cutoff sessions", fontsize=11, color=TEXT)
+    ax_read.text(0.05, 0.54, f"Minute Sharpe {fresh['minute_sharpe']:.3f}; daily Sharpe is fragile.", fontsize=11, color=GREEN)
+    ax_read.text(0.05, 0.34, f"AAPL transfer: {int(transfer['sessions'])} sessions, no retune.", fontsize=11, color=TEXT)
+    ax_read.text(0.05, 0.20, f"Minute Sharpe {transfer['minute_sharpe']:.3f}; positive but weak.", fontsize=11, color=AMBER)
+
+    add_note(fig, "Generated from micro_alpha_extended_validation_summary.csv. Fresh core daily Sharpe has only two observations.")
+    save(fig, HFT_PLOTS / "hft_micro_alpha_extended_validation.png")
 
 
 def plot_hft_cumulative() -> None:
@@ -1007,6 +1080,7 @@ def generate_hft_plots() -> None:
     plot_hft_dashboard()
     plot_hft_micro_alpha_quality()
     plot_hft_micro_alpha_validation()
+    plot_hft_micro_alpha_extended_validation()
     plot_hft_cumulative()
     plot_hft_daily_bars()
     plot_hft_stress()

@@ -1,0 +1,3 @@
+date,symbol,file_path,row_count,first_timestamp_ns,last_timestamp_ns,duration_minutes,min_bid,max_ask,mean_spread,median_spread,min_spread,max_spread,status
+2026-05-13,IWM,/home/boss1000/Projects/HFT Training/Portfolio Quotes/IWM_open60/iwm_2026_05_13.csv,616743,1778679000003967259,1778682599975347194,59.9995,274.390000,291.400000,1.27454033,1.06377320,0.35396351,601.28316160,ok
+2026-05-14,IWM,/home/boss1000/Projects/HFT Training/Portfolio Quotes/IWM_open60/iwm_2026_05_14.csv,553024,1778765400007143946,1778768999835845443,59.9971,275.200000,292.280000,1.41069787,1.05829438,0.35194538,601.95954042,ok

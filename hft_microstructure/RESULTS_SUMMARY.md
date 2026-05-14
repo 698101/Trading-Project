@@ -110,6 +110,13 @@ These intervals resample days and are descriptive uncertainty estimates, not a p
 
 This reduces pure full-sample tuning risk, but it is still not a substitute for a genuinely new date range, more symbols, and execution-calibrated fills.
 
+`Results/micro_alpha_extended_validation_report.md` adds the first post-cutoff and transfer-symbol checks:
+
+| Scope | Dates | Minute Sharpe | Daily Sharpe | Total PnL | Note |
+|---|---|---:|---:|---:|---|
+| Fresh SPY/QQQ/IWM core | 2026-05-13 to 2026-05-14 | 0.702 | 3.978 | 1,153.1 bps | Useful but only two sessions |
+| No-retune AAPL transfer | 2026-05-01 to 2026-05-07 | 0.175 | 1.563 | 47.9 bps | Positive but weak transfer evidence |
+
 ## Real-Quote Stress Grid
 
 `Results/alpaca_spy_real_quote_stress_distribution_summary.csv` summarizes the SPY 51-session stress runs across three fill-randomness seeds, five adverse-selection penalties, and two portfolio modes.
@@ -277,6 +284,10 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Results/micro_alpha_quality_sharpe_report.md`
 - `Results/micro_alpha_validation_summary.csv`
 - `Results/micro_alpha_validation_report.md`
+- `Results/micro_alpha_extended_validation_summary.csv`
+- `Results/micro_alpha_extended_validation_daily_results.csv`
+- `Results/micro_alpha_extended_validation_report.md`
+- `Results/alpaca_real_quote_fresh_coverage_summary.csv`
 - `Results/demo_quotes_synthetic.csv`
 - `Results/trade_log.csv`
 - `Results/rejected_signals.csv`
@@ -286,6 +297,7 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Plots/hft_real_quote_dashboard.png`
 - `Plots/hft_micro_alpha_quality_sharpe.png`
 - `Plots/hft_micro_alpha_validation.png`
+- `Plots/hft_micro_alpha_extended_validation.png`
 - `Plots/hft_cross_symbol_cumulative_pnl.png`
 - `Plots/hft_daily_pnl_bars.png`
 - `Plots/hft_adverse_selection_stress.png`
