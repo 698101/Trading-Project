@@ -23,6 +23,8 @@ def load_script(name: str):
 scorecard = load_script("build_project_scorecard")
 micro_validation = load_script("analyze_micro_alpha_validation")
 extended_validation = load_script("summarize_micro_alpha_extended_validation")
+research_quality = load_script("analyze_micro_alpha_research_quality")
+release_verify = load_script("verify_research_release")
 
 
 class ReviewerDocsTests(unittest.TestCase):
@@ -41,11 +43,14 @@ class ReviewerDocsTests(unittest.TestCase):
     def test_scorecard_is_built_from_saved_metrics(self) -> None:
         text = scorecard.build_scorecard(ROOT)
         self.assertIn("Selected quality gate", text)
+        self.assertIn("9/10", text)
         self.assertIn("2.876", text)
         self.assertIn("OOS", text)
         self.assertIn("0.584", text)
         self.assertIn("Fresh core OOS", text)
         self.assertIn("0.702", text)
+        self.assertIn("Final research-quality gates", text)
+        self.assertIn("8 pass / 3 warn / 1 fail", text)
         self.assertIn("Annualized Sharpe", text)
         self.assertIn("1.4505", text)
 
@@ -72,6 +77,15 @@ class ReviewerDocsTests(unittest.TestCase):
         self.assertEqual(row["start_date"], "2026-05-13")
         self.assertEqual(row["end_date"], "2026-05-14")
         self.assertEqual(row["trade_count"], 3)
+
+    def test_research_quality_fold_split_and_psr(self) -> None:
+        folds = research_quality.fold_dates(["2026-01-04", "2026-01-01", "2026-01-02"], 3)
+        self.assertEqual(folds, [["2026-01-01"], ["2026-01-02"], ["2026-01-04"]])
+        self.assertGreater(research_quality.probabilistic_sharpe_ratio([1.0, 1.2, 0.8, 1.1]), 0.95)
+
+    def test_release_verifier_finds_rows(self) -> None:
+        rows = [{"scope": "combined", "minute_sharpe": "0.601"}]
+        self.assertEqual(release_verify.find_row(rows, scope="combined")["minute_sharpe"], "0.601")
 
 
 if __name__ == "__main__":

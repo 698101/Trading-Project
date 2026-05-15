@@ -117,6 +117,19 @@ This reduces pure full-sample tuning risk, but it is still not a substitute for 
 | Fresh SPY/QQQ/IWM core | 2026-05-13 to 2026-05-14 | 0.702 | 3.978 | 1,153.1 bps | Useful but only two sessions |
 | No-retune AAPL transfer | 2026-05-01 to 2026-05-07 | 0.175 | 1.563 | 47.9 bps | Positive but weak transfer evidence |
 
+`Results/micro_alpha_research_quality_report.md` is the final no-new-data hardening layer. It keeps the selected gate frozen and adds statistical sanity checks, three chronological folds, and explicit pass/warn/fail gates:
+
+| Check | Result |
+|---|---:|
+| Final quality gates | 8 pass / 3 warn / 1 fail |
+| Selected all-sample daily PSR > 0 | 1.000 |
+| Candidate-count Bonferroni confidence | 1.000 |
+| Sign-flip p-value on total PnL | 0.0000 |
+| Minimum chronological-fold minute Sharpe | 0.577 |
+| Minimum chronological-fold PnL | 9,117.5 bps |
+
+The remaining fail is intentionally production-specific: there is still no broker fill reconciliation or queue-position calibration. That is why the project can be rated 9/10 as a research portfolio without being presented as live-trading infrastructure.
+
 ## Real-Quote Stress Grid
 
 `Results/alpaca_spy_real_quote_stress_distribution_summary.csv` summarizes the SPY 51-session stress runs across three fill-randomness seeds, five adverse-selection penalties, and two portfolio modes.
@@ -287,6 +300,10 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Results/micro_alpha_extended_validation_summary.csv`
 - `Results/micro_alpha_extended_validation_daily_results.csv`
 - `Results/micro_alpha_extended_validation_report.md`
+- `Results/micro_alpha_statistical_diagnostics.csv`
+- `Results/micro_alpha_walk_forward_folds.csv`
+- `Results/micro_alpha_research_quality_scorecard.csv`
+- `Results/micro_alpha_research_quality_report.md`
 - `Results/alpaca_real_quote_fresh_coverage_summary.csv`
 - `Results/demo_quotes_synthetic.csv`
 - `Results/trade_log.csv`
@@ -298,6 +315,7 @@ This stress test is intentionally conservative for presentation: it shows that m
 - `Plots/hft_micro_alpha_quality_sharpe.png`
 - `Plots/hft_micro_alpha_validation.png`
 - `Plots/hft_micro_alpha_extended_validation.png`
+- `Plots/hft_micro_alpha_research_quality.png`
 - `Plots/hft_cross_symbol_cumulative_pnl.png`
 - `Plots/hft_daily_pnl_bars.png`
 - `Plots/hft_adverse_selection_stress.png`

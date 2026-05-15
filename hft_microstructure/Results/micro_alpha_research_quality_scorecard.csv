@@ -1,0 +1,13 @@
+gate,status,metric,threshold,evidence,next_action
+selected_config_pinned,pass,configs/micro_alpha_selected_quality.json,selected config committed,"Run parameters, manifests, and saved outputs are pinned.",Keep future research runs in separate configs.
+full_sample_minute_sharpe_improvement,pass,+0.088,> +0.050,Selected quality gate improves full-sample minute Sharpe versus original mm baseline.,Do not retune this gate on future holdout dates.
+chronological_oos_improvement,pass,+0.129,> 0.000,Later 20-session OOS minute Sharpe beats original mm baseline.,Extend the same frozen check as more dates become available.
+oos_retention_vs_train,pass,0.953,>= 0.750,OOS minute Sharpe remains close to the train split.,Keep monitoring decay on untouched dates.
+three_fold_chronological_stability,pass,"min_fold_minute=0.577; min_fold_pnl=9,117.5 bps",all folds positive and min minute Sharpe > 0.400,The frozen selected gate stays positive across three chronological folds.,Add more folds only when more untouched sessions exist.
+statistical_significance_sanity,pass,1.000,Bonferroni confidence > 0.950,Daily PSR remains high after a simple candidate-count penalty.,"Treat this as a sanity check, not a proof of future alpha."
+fresh_post_cutoff_check,warn,2 sessions; minute Sharpe 0.702,"positive, but needs >= 20 sessions for stronger evidence",The first post-cutoff SPY/QQQ/IWM cut is positive but very small.,Extend without changing the selected config.
+no_retune_transfer_symbol,warn,AAPL minute Sharpe 0.175,"> 0, with no symbol-specific retune",AAPL transfer is positive but weak.,Expand to more large-cap transfer symbols before broad claims.
+adverse_selection_boundary,pass,core mm-only survives 0.5 bps and fails at 2 bps,explicit cross-symbol break point,Stress tests identify the fill-quality boundary instead of hiding it.,Paper fills should calibrate this boundary.
+latency_sweep_coverage,pass,"IWM,QQQ,SPY","SPY, QQQ, IWM at 100ms",True delayed-signal sweeps are retained for the core symbols.,Replace static delays with broker/order timestamps when available.
+top_of_book_data_depth,warn,top-of-book only,full depth/order-event data for production claims,"Current evidence is quote-replay research, not exchange queue proof.",Do not claim production HFT fill quality without depth/fill data.
+live_fill_calibration,fail,not available,paper/live broker fills,The repo has no broker fill reconciliation yet.,Add Alpaca paper execution logs before calling this live-trading-ready.

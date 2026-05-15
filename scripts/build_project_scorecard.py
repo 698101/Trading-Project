@@ -94,6 +94,9 @@ def build_micro_section(root: Path) -> list[str]:
     quality_rows = read_csv(results_dir / "micro_alpha_quality_sharpe_summary.csv")
     validation_rows = read_csv(results_dir / "micro_alpha_validation_summary.csv")
     extended_rows = read_csv(results_dir / "micro_alpha_extended_validation_summary.csv")
+    research_quality_rows = read_csv(results_dir / "micro_alpha_research_quality_scorecard.csv")
+    diagnostic_rows = read_csv(results_dir / "micro_alpha_statistical_diagnostics.csv")
+    fold_rows = read_csv(results_dir / "micro_alpha_walk_forward_folds.csv")
     baseline = find_row(quality_rows, scope="original_mm_baseline")
     quality = find_row(quality_rows, scope="combined")
     prior = find_row(quality_rows, scope="prior_edge_selected")
@@ -232,6 +235,50 @@ def build_micro_section(root: Path) -> list[str]:
                 "",
             ]
         )
+    if research_quality_rows:
+        selected_all = find_row(diagnostic_rows, scope="selected_quality_gate_all")
+        selected_oos_diag = find_row(diagnostic_rows, scope="selected_quality_gate_oos")
+        min_fold_minute = min((as_float(row.get("minute_sharpe")) for row in fold_rows), default=0.0)
+        min_fold_pnl = min((as_float(row.get("total_pnl_bps")) for row in fold_rows), default=0.0)
+        key_gates = [
+            "selected_config_pinned",
+            "chronological_oos_improvement",
+            "three_fold_chronological_stability",
+            "statistical_significance_sanity",
+            "fresh_post_cutoff_check",
+            "no_retune_transfer_symbol",
+            "live_fill_calibration",
+        ]
+        gate_table = [
+            {
+                "Gate": row.get("gate", ""),
+                "Status": row.get("status", ""),
+                "Metric": row.get("metric", ""),
+            }
+            for row in research_quality_rows
+            if row.get("gate") in key_gates
+        ]
+        lines.extend(["Final research-quality gates:", ""])
+        lines.extend(markdown_table(gate_table, ["Gate", "Status", "Metric"]))
+        lines.extend(
+            [
+                "",
+                (
+                    "Final quality scorecard: "
+                    f"{pass_warn_fail_counts(research_quality_rows)}; "
+                    f"OOS minute Sharpe {fmt(selected_oos_diag.get('minute_sharpe'))}; "
+                    f"min fold minute Sharpe {min_fold_minute:.3f}; "
+                    f"min fold PnL {min_fold_pnl:,.1f} bps."
+                ),
+                (
+                    "Statistical sanity: "
+                    f"daily PSR > 0 is {fmt(selected_all.get('daily_psr_gt_zero'))}, "
+                    f"Bonferroni confidence is {fmt(selected_all.get('bonferroni_confidence_gt_zero'))}, "
+                    f"and sign-flip p-value is {fmt(selected_all.get('sign_flip_p_value_total_pnl'), 4)}."
+                ),
+                "",
+            ]
+        )
     lines.extend(
         [
             "Current boundary: this is Alpaca IEX top-of-book evidence over 51 SPY/QQQ/IWM open-window sessions, not full depth-of-book or live fills.",
@@ -305,18 +352,18 @@ def build_scorecard(root: Path) -> str:
     rating_rows = [
         {
             "Dimension": "Quant research portfolio",
-            "Rating": "8/10",
-            "Reason": "Two independent systems, real result artifacts, stress tests, walk-forward checks, and honest limitations.",
+            "Rating": "9/10",
+            "Reason": "Two independent systems, pinned configs, OOS/fold checks, stress tests, statistical diagnostics, CI, and honest limitations.",
         },
         {
             "Dimension": "Research evidence",
-            "Rating": "6.5-7/10",
-            "Reason": "Promising metrics with useful robustness work, but still constrained by data realism.",
+            "Rating": "7.5/10",
+            "Reason": "Strong saved evidence for a portfolio project, but still constrained by top-of-book data and limited untouched transfer coverage.",
         },
         {
             "Dimension": "Live trading readiness",
-            "Rating": "3-4/10",
-            "Reason": "No live fills, no calibrated HFT queue model, and no point-in-time/delisting-aware medium-alpha universe.",
+            "Rating": "4/10",
+            "Reason": "No broker fill reconciliation, no calibrated HFT queue model, and no point-in-time/delisting-aware medium-alpha universe.",
         },
     ]
     lines.extend(markdown_table(rating_rows, ["Dimension", "Rating", "Reason"]))
@@ -327,11 +374,11 @@ def build_scorecard(root: Path) -> str:
         [
             "## Upgrade Priorities",
             "",
-            "1. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows.",
-            "2. Add a calibrated passive-fill and queue-position model using execution or order-book data.",
+            "1. Add paper/live broker fill reconciliation for the micro alpha.",
+            "2. Calibrate passive-fill and queue-position assumptions using execution or order-book data.",
             "3. Replace the medium-alpha universe with point-in-time, delisting-aware data.",
-            "4. Keep raw-data manifests and exact run configs pinned so GitHub evidence is reproducible.",
-            "5. Add negative controls for shuffled HFT signals and shuffled medium-alpha ranks.",
+            "4. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows without changing the pinned config.",
+            "5. Keep release verification green in GitHub Actions.",
             "",
         ]
     )

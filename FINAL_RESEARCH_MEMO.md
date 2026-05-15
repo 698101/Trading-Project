@@ -1,6 +1,6 @@
 # Quant Research Portfolio Memo
 
-Last updated: 2026-05-14
+Last updated: 2026-05-15
 
 This repository contains two independent research projects:
 
@@ -28,7 +28,9 @@ The main HFT evidence is not the headline PnL. It is the stress boundary:
 - IWM full-mode is positive through 0.5 bps, marginal around 1 bps, and fails at 2 bps; market-making-only survives 1 bps and fails at 2 bps.
 - Signal-latency sweeps exist for SPY, QQQ, and IWM and record expired signals explicitly.
 
-The latest micro-alpha improvement is the selected market-making quality gate. It raises combined SPY/QQQ/IWM minute Sharpe from 0.513 to 0.601 and combined daily Sharpe from 2.529 to 2.876. A chronological train/OOS sanity check now retains 0.584 OOS minute Sharpe and 3.733 OOS daily Sharpe over the later 20 sessions. A post-cutoff two-session SPY/QQQ/IWM check remains positive at 0.702 minute Sharpe, and a no-retune AAPL transfer check is positive but weak at 0.175 minute Sharpe. These should still be treated as local validation checks rather than fully untouched production evidence.
+The latest micro-alpha improvement is the selected market-making quality gate. It raises combined SPY/QQQ/IWM minute Sharpe from 0.513 to 0.601 and combined daily Sharpe from 2.529 to 2.876. A chronological train/OOS sanity check now retains 0.584 OOS minute Sharpe and 3.733 OOS daily Sharpe over the later 20 sessions. A post-cutoff two-session SPY/QQQ/IWM check remains positive at 0.702 minute Sharpe, and a no-retune AAPL transfer check is positive but weak at 0.175 minute Sharpe.
+
+The final no-new-data hardening pass adds the missing research credibility layer: three chronological folds are all positive, with minimum fold minute Sharpe 0.577 and minimum fold PnL 9,117.5 bps; the selected all-sample daily PSR sanity check and candidate-count Bonferroni confidence both report 1.000; and the final gate scorecard is 8 pass / 3 warn / 1 fail. The remaining fail is production-specific: no broker fill reconciliation. These results support a 9/10 research-portfolio rating, but not a live-trading claim.
 
 Primary files:
 
@@ -39,6 +41,7 @@ Primary files:
 - `hft_microstructure/Results/micro_alpha_quality_sharpe_report.md`
 - `hft_microstructure/Results/micro_alpha_validation_report.md`
 - `hft_microstructure/Results/micro_alpha_extended_validation_report.md`
+- `hft_microstructure/Results/micro_alpha_research_quality_report.md`
 - `hft_microstructure/Results/alpaca_spy_real_quote_stress_distribution_summary.csv`
 - `hft_microstructure/Results/alpaca_qqq_real_quote_stress_distribution_summary.csv`
 - `hft_microstructure/Results/alpaca_iwm_real_quote_stress_distribution_summary.csv`
@@ -107,6 +110,7 @@ This is now a strong quant research portfolio if presented with precision:
 - Lead with the HFT project for systems, microstructure, and execution-aware research engineering.
 - Use the medium-term alpha project to show systematic research process, robustness reporting, and honest data-hygiene discipline.
 - Do not claim live HFT tradability or production alpha.
+- It is fair to call the repo 9/10 as a research portfolio because the final scorecard is pinned, fold-stable, statistically sanity-checked, stress-tested, CI-verified, and honest about production gaps.
 - Be ready to explain why minute Sharpe is used for the intraday HFT evidence and annualized daily Sharpe is used for medium-term alpha.
 - Be ready to discuss exactly where each strategy breaks under stress.
 

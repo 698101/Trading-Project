@@ -1,0 +1,20 @@
+name: Research CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile Python scripts
+        run: python -m py_compile scripts/*.py medium_term_alpha/*.py hft_microstructure/*.py
+      - name: Run unit tests
+        run: python -m unittest tests/test_quote_workflow.py tests/test_medium_alpha_evidence.py tests/test_project_scorecard.py
+      - name: Verify research release artifacts
+        run: python scripts/verify_research_release.py

@@ -218,6 +218,54 @@ def hft_extended_validation_summary() -> pd.DataFrame:
     return frame
 
 
+def hft_research_quality_scorecard() -> pd.DataFrame:
+    return read_csv(HFT_RESULTS / "micro_alpha_research_quality_scorecard.csv")
+
+
+def hft_statistical_diagnostics() -> pd.DataFrame:
+    frame = read_csv(HFT_RESULTS / "micro_alpha_statistical_diagnostics.csv")
+    numeric_cols = [
+        "sessions",
+        "total_pnl_bps",
+        "avg_daily_pnl_bps",
+        "daily_sharpe",
+        "annualized_daily_sharpe",
+        "minute_sharpe",
+        "daily_psr_gt_zero",
+        "daily_psr_gt_annual_sharpe_1",
+        "bonferroni_confidence_gt_zero",
+        "sign_flip_p_value_total_pnl",
+        "loss_day_rate",
+        "positive_day_rate",
+        "interval_count",
+        "trade_count",
+    ]
+    for col in numeric_cols:
+        if col in frame:
+            frame[col] = clean_num(frame[col])
+    return frame
+
+
+def hft_walk_forward_folds() -> pd.DataFrame:
+    frame = read_csv(HFT_RESULTS / "micro_alpha_walk_forward_folds.csv")
+    numeric_cols = [
+        "fold",
+        "sessions",
+        "total_pnl_bps",
+        "avg_daily_pnl_bps",
+        "daily_sharpe",
+        "annualized_daily_sharpe",
+        "minute_sharpe",
+        "positive_day_rate",
+        "worst_interval_drawdown_bps",
+        "trade_count",
+    ]
+    for col in numeric_cols:
+        if col in frame:
+            frame[col] = clean_num(frame[col])
+    return frame
+
+
 def hft_evidence_ci() -> pd.DataFrame:
     frame = read_csv(HFT_RESULTS / "real_quote_evidence_ci.csv")
     for col in [
@@ -591,6 +639,79 @@ def plot_hft_micro_alpha_extended_validation() -> None:
 
     add_note(fig, "Generated from micro_alpha_extended_validation_summary.csv. Fresh core daily Sharpe has only two observations.")
     save(fig, HFT_PLOTS / "hft_micro_alpha_extended_validation.png")
+
+
+def plot_hft_micro_alpha_research_quality() -> None:
+    scorecard = hft_research_quality_scorecard()
+    diagnostics = hft_statistical_diagnostics()
+    folds = hft_walk_forward_folds()
+    status_counts = scorecard["status"].value_counts().reindex(["pass", "warn", "fail"]).fillna(0)
+    selected_all = diagnostics[diagnostics["scope"] == "selected_quality_gate_all"].iloc[0]
+    selected_oos = diagnostics[diagnostics["scope"] == "selected_quality_gate_oos"].iloc[0]
+
+    fig = plt.figure(figsize=(15.2, 8.4))
+    grid = fig.add_gridspec(2, 2, width_ratios=[0.9, 1.1], height_ratios=[1.0, 1.0])
+    fig.suptitle(
+        "Micro Alpha Final Research Quality",
+        x=0.01,
+        y=0.995,
+        ha="left",
+        fontsize=22,
+        color=WHITE,
+        fontweight="bold",
+    )
+    fig.text(
+        0.01,
+        0.952,
+        "Pinned gate, chronological folds, statistical sanity checks, and explicit production boundary.",
+        color=MUTED,
+        ha="left",
+        fontsize=11,
+    )
+
+    ax_gates = fig.add_subplot(grid[0, 0])
+    gate_colors = [GREEN, AMBER, RED]
+    bars = ax_gates.bar(status_counts.index, status_counts.values, color=gate_colors)
+    style_ax(ax_gates, "Research Gates", "Status", "Count")
+    ax_gates.set_ylim(0, max(status_counts.max() + 1, 4))
+    for bar, value in zip(bars, status_counts.values):
+        ax_gates.text(bar.get_x() + bar.get_width() / 2, value + 0.12, f"{int(value)}", ha="center", color=TEXT, fontsize=12, fontweight="bold")
+
+    ax_folds = fig.add_subplot(grid[0, 1])
+    fold_labels = [f"Fold {int(value)}" for value in folds["fold"]]
+    bars = ax_folds.bar(fold_labels, folds["minute_sharpe"], color=[CYAN, BLUE, PURPLE])
+    style_ax(ax_folds, "Chronological Fold Stability", "Fold", "Minute Sharpe")
+    ax_folds.set_ylim(0, max(folds["minute_sharpe"].max() + 0.12, 0.8))
+    for bar, value, pnl in zip(bars, folds["minute_sharpe"], folds["total_pnl_bps"]):
+        ax_folds.text(bar.get_x() + bar.get_width() / 2, value + 0.025, f"{value:.3f}\n{pnl:,.0f} bps", ha="center", color=TEXT, fontsize=10, fontweight="bold")
+
+    ax_stats = fig.add_subplot(grid[1, 0])
+    stat_labels = ["Daily PSR > 0", "Bonferroni\nconfidence", "Sign-flip\nconfidence"]
+    stat_values = [
+        selected_all["daily_psr_gt_zero"],
+        selected_all["bonferroni_confidence_gt_zero"],
+        1.0 - selected_all["sign_flip_p_value_total_pnl"],
+    ]
+    bars = ax_stats.bar(stat_labels, stat_values, color=[GREEN, GREEN, GREEN])
+    style_ax(ax_stats, "Statistical Sanity Checks", "Check", "Confidence")
+    ax_stats.set_ylim(0, 1.08)
+    for bar, value in zip(bars, stat_values):
+        ax_stats.text(bar.get_x() + bar.get_width() / 2, min(value + 0.025, 1.04), f"{value:.3f}", ha="center", color=TEXT, fontsize=11, fontweight="bold")
+
+    ax_read = fig.add_subplot(grid[1, 1])
+    ax_read.set_axis_off()
+    pass_count = int(status_counts.get("pass", 0))
+    warn_count = int(status_counts.get("warn", 0))
+    fail_count = int(status_counts.get("fail", 0))
+    ax_read.text(0.03, 0.88, "Read", fontsize=15, color=WHITE, fontweight="bold")
+    ax_read.text(0.05, 0.72, f"Gates: {pass_count} pass / {warn_count} warn / {fail_count} fail.", fontsize=11, color=TEXT)
+    ax_read.text(0.05, 0.58, f"Selected OOS minute Sharpe: {selected_oos['minute_sharpe']:.3f}.", fontsize=11, color=GREEN)
+    ax_read.text(0.05, 0.44, f"All-sample daily Sharpe: {selected_all['daily_sharpe']:.3f}; positive-day rate: {selected_all['positive_day_rate']:.0%}.", fontsize=11, color=TEXT)
+    ax_read.text(0.05, 0.30, "Remaining fail: no broker fill reconciliation.", fontsize=11, color=AMBER)
+    ax_read.text(0.05, 0.16, "Research portfolio: 9/10. Production trading: not claimed.", fontsize=11, color=TEXT)
+
+    add_note(fig, "Generated from micro_alpha_research_quality_scorecard.csv, micro_alpha_walk_forward_folds.csv, and micro_alpha_statistical_diagnostics.csv.")
+    save(fig, HFT_PLOTS / "hft_micro_alpha_research_quality.png")
 
 
 def plot_hft_cumulative() -> None:
@@ -1081,6 +1202,7 @@ def generate_hft_plots() -> None:
     plot_hft_micro_alpha_quality()
     plot_hft_micro_alpha_validation()
     plot_hft_micro_alpha_extended_validation()
+    plot_hft_micro_alpha_research_quality()
     plot_hft_cumulative()
     plot_hft_daily_bars()
     plot_hft_stress()

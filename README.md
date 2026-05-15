@@ -13,13 +13,15 @@ For a short review path, see `REVIEWER_GUIDE.md`. For the current metric/risk sc
 
 ![HFT microstructure dashboard](hft_microstructure/Plots/hft_report.png)
 
+![Micro alpha final research quality](hft_microstructure/Plots/hft_micro_alpha_research_quality.png)
+
 ![Medium-term alpha dashboard](medium_term_alpha/Plots/medium_term_alpha_report.png)
 
 ## Projects At A Glance
 
 | Project | Focus | Language | What It Demonstrates | Saved Headline Evidence |
 |---|---|---:|---|---|
-| `hft_microstructure/` | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Selected market-making quality gate: 0.601 minute Sharpe and 2.876 daily Sharpe combined across SPY/QQQ/IWM. Stress grids show explicit adverse-selection breakpoints: SPY survives 1 bps and fails at 2 bps, QQQ survives 0.5 bps and fails around 1 bps, and IWM full-mode is marginal around 1 bps |
+| `hft_microstructure/` | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Selected market-making quality gate: 0.601 minute Sharpe and 2.876 daily Sharpe combined across SPY/QQQ/IWM. Final quality gates: 8 pass / 3 warn / 1 fail, with three positive chronological folds and explicit adverse-selection breakpoints |
 | `medium_term_alpha/` | Cross-sectional medium-term equity alpha with cost-aware portfolio construction | Python | Signal engineering, walk-forward validation, sensitivity/capacity analysis, benchmark comparison, bootstrap/negative-control reporting | Selected default: 1.45 annualized Sharpe vs SPY 0.80, 18.9% annualized return, 322.4% total return, -15.6% max drawdown. Robustness scorecard passes benchmark, walk-forward, cost, capacity, and sign-flip checks; point-in-time universe remains the main fail |
 
 ## Repository Structure
@@ -66,6 +68,7 @@ quant-trading-research-portfolio/
 |   |   |-- hft_micro_alpha_quality_sharpe.png
 |   |   |-- hft_micro_alpha_validation.png
 |   |   |-- hft_micro_alpha_extended_validation.png
+|   |   |-- hft_micro_alpha_research_quality.png
 |   |   |-- hft_cross_symbol_cumulative_pnl.png
 |   |   |-- hft_daily_pnl_bars.png
 |   |   |-- hft_adverse_selection_stress.png
@@ -129,6 +132,7 @@ quant-trading-research-portfolio/
 - Bootstrap confidence intervals in `hft_microstructure/Results/real_quote_evidence_ci.csv` and an auto-generated robustness report in `hft_microstructure/Results/real_quote_robustness_report.md`.
 - Real-quote stress grid across seeds, adverse-selection penalties, and portfolio modes for SPY, QQQ, and IWM to show robustness boundaries rather than only headline performance.
 - True signal-latency sensitivity on SPY, QQQ, and IWM sessions, with explicit expired-signal counts.
+- Final research-quality diagnostics in `hft_microstructure/Results/micro_alpha_research_quality_report.md`, including three chronological fold checks, PSR/sign-flip sanity checks, and explicit pass/warn/fail gates.
 - One-command orchestration via `scripts/run_citadel_hft_evidence.py` for repairing quote coverage, running the suite, and regenerating the report.
 
 Minute Sharpe is the primary risk-adjusted metric because the saved evidence is intraday and open-window focused. Annualized Sharpe is retained in the CSVs only as a diagnostic scaling reference.
@@ -202,8 +206,13 @@ The top-level scorecard is regenerated from committed CSV artifacts with:
 ```bash
 python3 scripts/analyze_micro_alpha_validation.py
 python3 scripts/summarize_micro_alpha_extended_validation.py
+python3 scripts/analyze_micro_alpha_research_quality.py
 python3 scripts/build_project_scorecard.py
+python3 scripts/verify_research_release.py
 ```
+
+The full local artifact refresh path is `python3 scripts/rebuild_research_artifacts.py`; it expects the ignored local quote/build outputs for build-dependent HFT reports.
+GitHub Actions runs unit tests plus `scripts/verify_research_release.py` so the committed evidence, docs, and plots stay internally consistent.
 
 ## Limitations
 

@@ -7,9 +7,9 @@ It is intended as the honest recruiter/interviewer view: strong research portfol
 
 | Dimension | Rating | Reason |
 | --- | --- | --- |
-| Quant research portfolio | 8/10 | Two independent systems, real result artifacts, stress tests, walk-forward checks, and honest limitations. |
-| Research evidence | 6.5-7/10 | Promising metrics with useful robustness work, but still constrained by data realism. |
-| Live trading readiness | 3-4/10 | No live fills, no calibrated HFT queue model, and no point-in-time/delisting-aware medium-alpha universe. |
+| Quant research portfolio | 9/10 | Two independent systems, pinned configs, OOS/fold checks, stress tests, statistical diagnostics, CI, and honest limitations. |
+| Research evidence | 7.5/10 | Strong saved evidence for a portfolio project, but still constrained by top-of-book data and limited untouched transfer coverage. |
+| Live trading readiness | 4/10 | No broker fill reconciliation, no calibrated HFT queue model, and no point-in-time/delisting-aware medium-alpha universe. |
 
 ## Micro Alpha
 
@@ -49,6 +49,21 @@ Extended validation:
 
 Fresh core validation is post-cutoff but only two sessions; the AAPL transfer test is no-retune and directionally positive but weak.
 
+Final research-quality gates:
+
+| Gate | Status | Metric |
+| --- | --- | --- |
+| selected_config_pinned | pass | configs/micro_alpha_selected_quality.json |
+| chronological_oos_improvement | pass | +0.129 |
+| three_fold_chronological_stability | pass | min_fold_minute=0.577; min_fold_pnl=9,117.5 bps |
+| statistical_significance_sanity | pass | 1.000 |
+| fresh_post_cutoff_check | warn | 2 sessions; minute Sharpe 0.702 |
+| no_retune_transfer_symbol | warn | AAPL minute Sharpe 0.175 |
+| live_fill_calibration | fail | not available |
+
+Final quality scorecard: 8 pass / 3 warn / 1 fail; OOS minute Sharpe 0.584; min fold minute Sharpe 0.577; min fold PnL 9,117.5 bps.
+Statistical sanity: daily PSR > 0 is 1.000, Bonferroni confidence is 1.000, and sign-flip p-value is 0.0000.
+
 Current boundary: this is Alpaca IEX top-of-book evidence over 51 SPY/QQQ/IWM open-window sessions, not full depth-of-book or live fills.
 
 ## Medium Alpha
@@ -68,8 +83,8 @@ Current boundary: the saved result is not point-in-time/delisting-aware and rema
 
 ## Upgrade Priorities
 
-1. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows.
-2. Add a calibrated passive-fill and queue-position model using execution or order-book data.
+1. Add paper/live broker fill reconciliation for the micro alpha.
+2. Calibrate passive-fill and queue-position assumptions using execution or order-book data.
 3. Replace the medium-alpha universe with point-in-time, delisting-aware data.
-4. Keep raw-data manifests and exact run configs pinned so GitHub evidence is reproducible.
-5. Add negative controls for shuffled HFT signals and shuffled medium-alpha ranks.
+4. Extend HFT validation to genuinely new dates, more symbols, and additional intraday windows without changing the pinned config.
+5. Keep release verification green in GitHub Actions.

@@ -30,10 +30,19 @@ This audit summarizes the cleanup and presentation work completed for the recrui
 - Reproducible plotting scripts:
   - `hft_microstructure/generate_plots.py`
   - `medium_term_alpha/reporting.py`
+- Final research-release hardening:
+  - `hft_microstructure/Results/micro_alpha_research_quality_report.md`
+  - `hft_microstructure/Results/micro_alpha_research_quality_scorecard.csv`
+  - `hft_microstructure/Results/micro_alpha_statistical_diagnostics.csv`
+  - `hft_microstructure/Results/micro_alpha_walk_forward_folds.csv`
+  - `hft_microstructure/Plots/hft_micro_alpha_research_quality.png`
+  - `scripts/verify_research_release.py`
+  - `.github/workflows/ci.yml`
 
 ## Evidence Boundaries
 
 - HFT 30-session headline results are saved historical-style SPY quote-replay outputs; full raw quote files are excluded due to size.
+- The final micro-alpha research-quality scorecard supports a 9/10 research-portfolio rating, not a live-trading rating.
 - HFT `trade_log.csv`, `rejected_signals.csv`, `ablation_results.csv`, and `latency_sensitivity.csv` are real simulator outputs from a deterministic synthetic demo stream, not historical performance evidence.
 - HFT latency sensitivity is proxy adverse-selection stress, not true timestamp-shift latency modelling.
 - Medium-term headline metrics are selected-default evidence from saved result CSVs.
