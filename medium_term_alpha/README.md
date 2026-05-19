@@ -151,7 +151,7 @@ Generated plots:
 - `Plots/turnover_holdings_concentration.png`
 - `Plots/factor_diagnostics.png`
 
-Dark reviewer plots are regenerated from the saved CSVs using `python3 scripts/generate_citadel_plots.py` from the repository root.
+Dark reviewer plots are regenerated from the saved CSVs using `python3 scripts/generate_research_plots.py` from the repository root.
 `cumulative_returns.png` uses the full saved monthly strategy equity and benchmark summary bars; `drawdown.png` uses the full monthly strategy drawdown path plus saved strategy/SPY max drawdown bars. Holdings and turnover plots remain sample-audit views until a pinned full holdings panel is supplied.
 
 ## Run The Project
@@ -183,7 +183,7 @@ python3 ../scripts/export_medium_alpha_selected_audit.py --csv /path/to/pinned_f
 Regenerate plots from saved CSVs:
 
 ```powershell
-python ../scripts/generate_citadel_plots.py
+python ../scripts/generate_research_plots.py
 ```
 
 Regenerate the robustness report:

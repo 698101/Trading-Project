@@ -23,7 +23,7 @@ Pinned selected-run configs live in `configs/`.
 Current dark reviewer plots:
 
 ```bash
-python3 scripts/generate_citadel_plots.py
+python3 scripts/generate_research_plots.py
 ```
 
 Full local artifact rebuild and release verification:

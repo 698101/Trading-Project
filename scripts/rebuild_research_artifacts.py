@@ -36,7 +36,7 @@ def main() -> int:
         run(root, [python, "scripts/analyze_medium_alpha_evidence.py", "--results-dir", "medium_term_alpha/Results"])
     run(root, [python, "scripts/build_project_scorecard.py"])
     if not args.skip_plots:
-        run(root, [python, "scripts/generate_citadel_plots.py"])
+        run(root, [python, "scripts/generate_research_plots.py"])
     run(root, [python, "scripts/verify_research_release.py"])
     return 0
 

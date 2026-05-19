@@ -16,7 +16,7 @@ Test whether simple, interpretable intraday microstructure signals remain useful
 - Updates portfolio state, sleeve-level strategy state, fills, costs, and risk gates as quotes arrive.
 - Compares market-making, liquidity-detection, momentum-ignition, and decision-engine variants.
 - Exports retained trade/fill logs and rejected-signal diagnostics for auditability.
-- Saves reviewer-facing CSVs in `Results/` and regenerates dark reviewer plots in `Plots/` with `scripts/generate_citadel_plots.py`.
+- Saves reviewer-facing CSVs in `Results/` and regenerates dark reviewer plots in `Plots/` with `scripts/generate_research_plots.py`.
 
 ## Data And Quote Replay
 
@@ -192,7 +192,7 @@ Download Alpaca historical quotes and run the one-command real-quote evidence pi
 ```bash
 export APCA_API_KEY_ID=...
 export APCA_API_SECRET_KEY=...
-python3 scripts/run_citadel_hft_evidence.py --symbols SPY,QQQ,IWM --start-date 2026-03-01 --end-date 2026-05-12 --target-ok-sessions 0 --max-sessions 51
+python3 scripts/run_hft_evidence_pipeline.py --symbols SPY,QQQ,IWM --start-date 2026-03-01 --end-date 2026-05-12 --target-ok-sessions 0 --max-sessions 51
 ```
 
 The Python downloader uses the actual New York 09:30 market open converted to UTC. Pass `--fixed-1330-utc` only to reproduce legacy fixed-UTC experiments.
@@ -207,7 +207,7 @@ python run_diagnostics.py
 Regenerate presentation plots from saved CSVs:
 
 ```powershell
-python ../scripts/generate_citadel_plots.py
+python ../scripts/generate_research_plots.py
 ```
 
 Run the quote-format smoke test:

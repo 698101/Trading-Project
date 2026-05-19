@@ -1,127 +1,79 @@
 # Quant Trading Research Portfolio
 
-This repository is a recruiter-facing research portfolio for quant trading, HFT-inspired microstructure research, systematic trading, and quantitative research roles. It contains two independent projects:
+A repository showcasing quantitative trading research across:
 
-- `hft_microstructure/`: C++ event-driven quote replay and execution-aware intraday microstructure simulation.
-- `medium_term_alpha/`: Python cross-sectional equity alpha research over 1-12 week holding horizons.
+- High-frequency market microstructure strategies (C++)
+- Execution-aware simulation and robustness testing
+- Medium-term cross-sectional alpha research (Python)
+- Regime-aware portfolio construction
+- Risk and capacity analysis
 
-The code is research infrastructure, not a live trading system. The focus is on interpretable assumptions, transaction costs, benchmark-aware reporting, robustness checks, and reproducible presentation artifacts.
+This repository contains research-oriented trading systems and backtesting frameworks intended for educational and research purposes. It is not production trading software.
 
-For a short review path, see `REVIEWER_GUIDE.md`. For the current metric/risk scorecard, see `PROJECT_SCORECARD.md`.
+## Start Here
 
-## Project Dashboards
+For reviewers:
 
-![HFT microstructure dashboard](hft_microstructure/Plots/hft_report.png)
+- [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md) - fastest overview of the project
+- [PROJECT_SCORECARD.md](PROJECT_SCORECARD.md) - summary of evidence and current status
+- [hft_microstructure/](hft_microstructure/) - HFT research and execution simulation
+- [medium_term_alpha/](medium_term_alpha/) - medium-term alpha research framework
+- [FINAL_RESEARCH_MEMO.md](FINAL_RESEARCH_MEMO.md) - consolidated research summary
 
-![Micro alpha final research quality](hft_microstructure/Plots/hft_micro_alpha_research_quality.png)
+## Key Capabilities Demonstrated
 
-![Medium-term alpha dashboard](medium_term_alpha/Plots/medium_term_alpha_report.png)
+- Event-driven backtesting
+- Execution-aware simulation
+- Market microstructure research
+- Portfolio construction
+- Regime detection
+- Risk controls
+- Capacity analysis
+- Monte Carlo robustness testing
+- Research reporting and diagnostics
+
+## Repository Structure
+
+- [hft_microstructure/](hft_microstructure/) - C++ quote-replay microstructure research, execution assumptions, stress tests, and retained diagnostics.
+- [medium_term_alpha/](medium_term_alpha/) - Python cross-sectional alpha framework with portfolio construction, benchmark comparison, and robustness reporting.
+- [scripts/](scripts/) - Research orchestration, reporting, audit export, and verification utilities.
+- [tests/](tests/) - Automated checks for repository behavior and release consistency.
+- [FINAL_RESEARCH_MEMO.md](FINAL_RESEARCH_MEMO.md) - Consolidated research memo across both projects.
+- [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md) - Short reviewer path through evidence, limitations, and reproduction commands.
+- [PROJECT_SCORECARD.md](PROJECT_SCORECARD.md) - Current evidence scorecard and status summary.
+
+## Key Limitations
+
+- Research code, not production trading infrastructure
+- Historical backtests do not guarantee future performance
+- Capacity estimates are approximations
+- Simulated execution differs from live market execution
+- Market impact modeling remains simplified
+
+## Research Diagnostics
+
+![HFT cumulative PnL by symbol](hft_microstructure/Plots/hft_cross_symbol_cumulative_pnl.png)
+
+![HFT drawdown comparison](hft_microstructure/Plots/hft_drawdown_comparison.png)
+
+![HFT latency sensitivity](hft_microstructure/Plots/hft_latency_sensitivity.png)
+
+![Medium-term alpha cumulative returns](medium_term_alpha/Plots/cumulative_returns.png)
+
+![Medium-term alpha rolling Sharpe](medium_term_alpha/Plots/rolling_sharpe.png)
+
+![Medium-term alpha cost and capacity sensitivity](medium_term_alpha/Plots/cost_capacity_sensitivity.png)
 
 ## Projects At A Glance
 
 | Project | Focus | Language | What It Demonstrates | Saved Headline Evidence |
 |---|---|---:|---|---|
-| `hft_microstructure/` | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Selected market-making quality gate: 0.601 minute Sharpe and 2.876 daily Sharpe combined across SPY/QQQ/IWM. Final quality gates: 8 pass / 3 warn / 1 fail, with three positive chronological folds and explicit adverse-selection breakpoints |
-| `medium_term_alpha/` | Cross-sectional medium-term equity alpha with cost-aware portfolio construction | Python | Signal engineering, walk-forward validation, sensitivity/capacity analysis, benchmark comparison, bootstrap/negative-control reporting | Selected default: 1.45 annualized Sharpe vs SPY 0.80, 18.9% annualized return, 322.4% total return, -15.6% max drawdown. Robustness scorecard passes benchmark, walk-forward, cost, capacity, and sign-flip checks; point-in-time universe remains the main fail |
-
-## Repository Structure
-
-```text
-quant-trading-research-portfolio/
-|-- README.md
-|-- .gitignore
-|-- LICENSE
-|-- PROJECT_SCORECARD.md
-|-- REPO_AUDIT.md
-|-- REVIEWER_GUIDE.md
-|-- configs/
-|   |-- micro_alpha_selected_quality.json
-|   |-- medium_alpha_selected_default.json
-|-- hft_microstructure/
-|   |-- README.md
-|   |-- RESULTS_SUMMARY.md
-|   |-- RESTRUCTURE_VALIDATION.md
-|   |-- build_instructions.md
-|   |-- main.cpp
-|   |-- microstructure_engine.cpp
-|   |-- strategies.cpp
-|   |-- risk_and_execution.cpp
-|   |-- ml_edge_model.cpp
-|   |-- generate_plots.py
-|   |-- run_diagnostics.py
-|   |-- config_example.json
-|   |-- requirements.txt
-|   |-- Results/
-|   |   |-- results_summary.csv
-|   |   |-- daily_results.csv
-|   |   |-- decision_engine_comparison.csv
-|   |   |-- strategy_sleeve_monte_carlo.csv
-|   |   |-- sample_quotes.csv
-|   |   |-- demo_quotes_synthetic.csv
-|   |   |-- trade_log.csv
-|   |   |-- rejected_signals.csv
-|   |   |-- ablation_results.csv
-|   |   |-- latency_sensitivity.csv
-|   |-- Plots/
-|   |   |-- hft_report.png
-|   |   |-- hft_real_quote_dashboard.png
-|   |   |-- hft_micro_alpha_quality_sharpe.png
-|   |   |-- hft_micro_alpha_validation.png
-|   |   |-- hft_micro_alpha_extended_validation.png
-|   |   |-- hft_micro_alpha_research_quality.png
-|   |   |-- hft_cross_symbol_cumulative_pnl.png
-|   |   |-- hft_daily_pnl_bars.png
-|   |   |-- hft_adverse_selection_stress.png
-|   |   |-- hft_latency_sensitivity.png
-|   |   |-- hft_bootstrap_ci.png
-|   |   |-- hft_drawdown_comparison.png
-|-- medium_term_alpha/
-|   |-- README.md
-|   |-- RESULTS_SUMMARY.md
-|   |-- RESTRUCTURE_VALIDATION.md
-|   |-- main.py
-|   |-- data_and_features.py
-|   |-- strategy_and_portfolio.py
-|   |-- backtest_and_metrics.py
-|   |-- plots.py
-|   |-- reporting.py
-|   |-- config_example.yaml
-|   |-- default_selection_report.md
-|   |-- requirements.txt
-|   |-- Results/
-|   |   |-- results_summary.csv
-|   |   |-- benchmark_comparison.csv
-|   |   |-- walk_forward_results.csv
-|   |   |-- sensitivity_results.csv
-|   |   |-- capacity_simulation.csv
-|   |   |-- factor_behavior_summary.csv
-|   |   |-- selected_default_metrics.csv
-|   |   |-- monthly_results.csv
-|   |   |-- medium_alpha_bootstrap_ci.csv
-|   |   |-- medium_alpha_negative_controls.csv
-|   |   |-- medium_alpha_robustness_scorecard.csv
-|   |   |-- medium_alpha_robustness_report.md
-|   |   |-- portfolio_weights.csv
-|   |   |-- rebalance_log.csv
-|   |   |-- daily_strategy_returns.csv
-|   |   |-- benchmark_timeseries.csv
-|   |   |-- sample_prices.csv
-|   |-- Plots/
-|   |   |-- medium_term_alpha_report.png
-|   |   |-- cumulative_returns.png
-|   |   |-- drawdown.png
-|   |   |-- rolling_sharpe.png
-|   |   |-- annual_returns.png
-|   |   |-- walk_forward_yearly_performance.png
-|   |   |-- cost_capacity_sensitivity.png
-|   |   |-- bootstrap_negative_control.png
-|   |   |-- turnover_holdings_concentration.png
-|   |   |-- factor_diagnostics.png
-```
+| [hft_microstructure/](hft_microstructure/) | Top-of-book quote replay, event-driven intraday simulation, strategy sleeves, execution/risk controls | C++ | Low-latency style data handling, fill/cost assumptions, decision-engine overlays, per-session diagnostics | Alpaca IEX real-quote evidence through 2026-05-12: 51 complete SPY, QQQ, and IWM open-window sessions. Selected market-making quality gate: 0.601 minute Sharpe and 2.876 daily Sharpe combined across SPY/QQQ/IWM. Final quality gates: 8 pass / 3 warn / 1 fail, with three positive chronological folds and explicit adverse-selection breakpoints |
+| [medium_term_alpha/](medium_term_alpha/) | Cross-sectional medium-term equity alpha with cost-aware portfolio construction | Python | Signal engineering, walk-forward validation, sensitivity/capacity analysis, benchmark comparison, bootstrap/negative-control reporting | Selected default: 1.45 annualized Sharpe vs SPY 0.80, 18.9% annualized return, 322.4% total return, -15.6% max drawdown. Robustness scorecard passes benchmark, walk-forward, cost, capacity, and sign-flip checks; point-in-time universe remains the main fail |
 
 ## HFT Microstructure Project
 
-`hft_microstructure/` is a C++ research simulator for replaying top-of-book quotes through event-driven intraday strategy logic. It includes:
+[hft_microstructure/](hft_microstructure/) is a C++ research simulator for replaying top-of-book quotes through event-driven intraday strategy logic. See [hft_microstructure/README.md](hft_microstructure/README.md) for the full project notes. It includes:
 
 - Market-making, liquidity-detection, and momentum-ignition sleeves.
 - Stochastic/partial fill assumptions, spread/slippage costs, adverse-selection controls, and exposure limits.
@@ -133,13 +85,13 @@ quant-trading-research-portfolio/
 - Real-quote stress grid across seeds, adverse-selection penalties, and portfolio modes for SPY, QQQ, and IWM to show robustness boundaries rather than only headline performance.
 - True signal-latency sensitivity on SPY, QQQ, and IWM sessions, with explicit expired-signal counts.
 - Final research-quality diagnostics in `hft_microstructure/Results/micro_alpha_research_quality_report.md`, including three chronological fold checks, PSR/sign-flip sanity checks, and explicit pass/warn/fail gates.
-- One-command orchestration via `scripts/run_citadel_hft_evidence.py` for repairing quote coverage, running the suite, and regenerating the report.
+- One-command orchestration via `scripts/run_hft_evidence_pipeline.py` for repairing quote coverage, running the suite, and regenerating the report.
 
 Minute Sharpe is the primary risk-adjusted metric because the saved evidence is intraday and open-window focused. Annualized Sharpe is retained in the CSVs only as a diagnostic scaling reference.
 
 ## Medium-Term Alpha Project
 
-`medium_term_alpha/` is a Python research workflow for cross-sectional equity momentum over 1-12 week horizons. It includes:
+[medium_term_alpha/](medium_term_alpha/) is a Python research workflow for cross-sectional equity momentum over 1-12 week horizons. See [medium_term_alpha/README.md](medium_term_alpha/README.md) for the full project notes. It includes:
 
 - 21, 63, and 126 trading-day momentum signals with a 5-day recent-return skip.
 - Short-term reversal penalty and quality/volatility-stability filter.
@@ -170,7 +122,7 @@ pip install -r requirements.txt
 g++ -std=c++17 -O2 -static -static-libgcc -static-libstdc++ -o hft_portfolio.exe main.cpp
 .\hft_portfolio.exe Results\sample_quotes.csv --rolling-window 75 --min-edge-bps 0.20 --forecast-weight 0.70 --min-reentry-events 40 --interval-seconds 60 --max-gross-exposure 1.0 --seed 1337 --forecast-mode heuristic --portfolio-mode full --decision-mode off
 python run_diagnostics.py
-python ../scripts/generate_citadel_plots.py
+python ../scripts/generate_research_plots.py
 ```
 
 Real-quote HFT evidence pipeline:
@@ -178,7 +130,7 @@ Real-quote HFT evidence pipeline:
 ```bash
 export APCA_API_KEY_ID=...
 export APCA_API_SECRET_KEY=...
-python3 scripts/run_citadel_hft_evidence.py --symbols SPY,QQQ,IWM --start-date 2026-03-01 --end-date 2026-05-12 --target-ok-sessions 0 --max-sessions 51
+python3 scripts/run_hft_evidence_pipeline.py --symbols SPY,QQQ,IWM --start-date 2026-03-01 --end-date 2026-05-12 --target-ok-sessions 0 --max-sessions 51
 ```
 
 The saved local evidence currently uses 51 complete open-window sessions for SPY, QQQ, and IWM from 2026-03-02 through 2026-05-12, excluding weekends and the 2026-04-03 market holiday. Raw quote CSVs are intentionally ignored because they are large.
@@ -190,7 +142,7 @@ cd medium_term_alpha
 pip install -r requirements.txt
 python main.py --csv Results\sample_prices.csv --output-dir Results_sample --plots-dir Plots_sample
 python ../scripts/analyze_medium_alpha_evidence.py --results-dir Results
-python ../scripts/generate_citadel_plots.py
+python ../scripts/generate_research_plots.py
 ```
 
 Full selected-default holdings audit from a pinned price panel:
@@ -199,7 +151,7 @@ Full selected-default holdings audit from a pinned price panel:
 python3 scripts/export_medium_alpha_selected_audit.py --csv /path/to/pinned_full_prices.csv --benchmark-csv /path/to/pinned_benchmark_prices.csv --output-dir medium_term_alpha/Results_full_selected_default --plots-dir medium_term_alpha/Plots_full_selected_default
 ```
 
-Dark reviewer plots are regenerated from saved CSVs with `python3 scripts/generate_citadel_plots.py`. HFT demo diagnostics use synthetic quotes for engine/log reproducibility only; full HFT result reproduction requires the excluded raw quote files. Full medium-term alpha runs can use the online data workflow with `python main.py --start 2018-01-01`, subject to data availability.
+Dark reviewer plots are regenerated from saved CSVs with `python3 scripts/generate_research_plots.py`. HFT demo diagnostics use synthetic quotes for engine/log reproducibility only; full HFT result reproduction requires the excluded raw quote files. Full medium-term alpha runs can use the online data workflow with `python main.py --start 2018-01-01`, subject to data availability.
 
 The top-level scorecard is regenerated from committed CSV artifacts with:
 
